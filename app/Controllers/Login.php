@@ -33,7 +33,7 @@ class Login extends Controller
                 if ($user['role'] === 'admin') {
                     return redirect()->to('/admin/dashboard'); // Redirect ke dashboard admin
                 } elseif ($user['role'] === 'customer') {
-                    return redirect()->to('/customer/dashboard'); // Redirect ke dashboard customer
+                    return redirect()->to('/customer/home'); // Redirect ke dashboard customer
                 }
             } else {
                 $session->setFlashdata('msg', 'Password salah');
