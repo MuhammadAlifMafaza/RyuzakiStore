@@ -14,7 +14,8 @@ if (file_exists(SYSTEMPATH . 'Config/Routes.php')) {
 }
 
 // Define your routes here
-$routes->get('/', 'Login::login'); // Halaman login
+// Define your routes here
+$routes->get('/', 'CustomerController::index'); // Halaman home customer
 $routes->get('/login', 'Login::login'); // Halaman login
 $routes->post('/auth/loginProcess', 'Login::loginProcess'); // Proses login
 $routes->get('/auth/logout', 'Login::logout'); // Proses logout
