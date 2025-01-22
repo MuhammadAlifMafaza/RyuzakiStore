@@ -1,55 +1,48 @@
-<aside class="main-sidebar sidebar-dark-primary elevation-4">
-  <a href="admin/dashboard" class="brand-link">
-    <img src="<?= base_url('AdminLTE-3.2.0/dist/img/RyugazakiLogo.png') ?>" alt="Ryugazaki Logo" class="brand-image img-circle elevation-3" style="opacity: .8">
-    <span class="brand-text font-weight-light">Ryugazaki Store</span>
-  </a>
-
-  <div class="sidebar">
-    <div class="user-panel mt-3 pb-3 mb-3 d-flex">
-      <div class="image">
-        <img src="<?= base_url('AdminLTE-3.2.0/dist/img/potrait.jpg') ?>" class="img-circle elevation-2" alt="User Image">
-      </div>
-      <div class="info">
-        <a class="d-block">Muhammad Alif Mafaza</a>
-      </div>
-    </div>
-    <nav class="mt-2">
-      <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
-        <li class="nav-header">Dashboard</li>
-        <li class="nav-item">
-          <a href="index.php?page=home" class="nav-link">
-            <i class="nav-icon fas fa-tachometer-alt"></i>
-            <p>Dashboard</p>
-          </a>
-        </li>
-        <li class="nav-header">Barang</li>
-        <li class="nav-item">
-          <a href="index.php?page=barang" class="nav-link">
-            <i class="nav-icon far fa-circle text-danger"></i>
-            <p>Barang</p>
-          </a>
-        </li>
-        <li class="nav-item">
-          <a href="index.php?page=pelanggan" class="nav-link">
-            <i class="nav-icon far fa-circle text-warning"></i>
-            <p>Pelanggan</p>
-          </a>
-        </li>
-        <li class="nav-item">
-          <a href="index.php?page=transaksi" class="nav-link">
-            <i class="nav-icon far fa-circle text-info"></i>
-            <p>Transaksi</p>
-          </a>
-        </li>
-        <!-- Tombol Logout -->
-        <li class="nav-item">
-          <a href="<?= site_url('auth/logout') ?>" class="nav-link">
-            <i class="nav-icon fas fa-sign-out-alt"> 
-              <p>Logout</p>
-            </i>
-          </a>
-        </li>
-      </ul>
-    </nav>
-  </div>
-</aside>
+<ul class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion" id="accordionSidebar">
+    <a class="sidebar-brand d-flex align-items-center justify-content-center" href="#">
+        <div class="sidebar-brand-icon rotate-n-15">
+            <i class="fas fa-laugh-wink"></i>
+        </div>
+        <div class="sidebar-brand-text mx-3">Admin</div>
+    </a>
+    <hr class="sidebar-divider my-0">
+    <li class="nav-item active">
+        <a class="nav-link" href="<?= base_url('dashboard'); ?>">
+            <i class="fas fa-fw fa-tachometer-alt"></i>
+            <span>Dashboard</span>
+        </a>
+    </li>
+    <hr class="sidebar-divider">
+    <div class="sidebar-heading">Menu</div>
+    <li class="nav-item">
+        <a class="nav-link" href="<?= base_url('departemen'); ?>">
+            <i class="fas fa-fw fa-building"></i>
+            <span>Departemen</span>
+        </a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" href="<?= base_url('cuti'); ?>">
+            <i class="fas fa-fw fa-calendar-alt"></i>
+            <span>Tipe Cuti</span>
+        </a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" href="<?= base_url('karyawan'); ?>">
+            <i class="fas fa-fw fa-users"></i>
+            <span>Karyawan</span>
+        </a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" href="<?= base_url('laporancuti'); ?>">
+            <i class="fas fa-fw fa-tasks"></i>
+            <span>Manajemen Cuti</span>
+        </a>
+    </li>
+    <hr class="sidebar-divider d-none d-md-block">
+    <li class="nav-item">
+        <a class="nav-link" href="<?= base_url('logout'); ?>">
+            <i class="fas fa-fw fa-sign-out-alt"></i>
+            <span>Logout</span>
+        </a>
+    </li>
+</ul>

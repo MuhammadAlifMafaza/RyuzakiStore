@@ -15,18 +15,31 @@ class Filters extends BaseConfig
 
     public $globals = [
         'before' => [
-            // Terapkan filter auth untuk semua rute kecuali login
-            'auth' => ['except' => ['auth/*', '/', 'customer/*']],
+            // Terapkan filter auth untuk semua rute, kecuali yang dikecualikan
+            'auth' => [
+                'except' => [
+                    '/',                // Halaman utama
+                    'login',            // Halaman login
+                    'auth/*',           // Semua rute terkait autentikasi
+                    'register',         // Halaman register
+                    'customer/*',       // Semua rute customer yang tidak membutuhkan autentikasi
+                ],
+            ],
         ],
-        'after'  => [
-            'toolbar',
+        'after' => [
+            'toolbar', // Tambahkan DebugToolbar setelah semua request
         ],
     ];
 
     public $methods = [];
 
     public $filters = [
-        // Terapkan filter untuk admin dan owner berdasarkan rute
-        'auth' => ['before' => ['admin/*', 'owner/*']],
+        // Terapkan filter auth untuk admin dan owner
+        'auth' => [
+            'before' => [
+                'admin/*',  // Semua rute dengan prefix admin
+                'owner/*',  // Semua rute dengan prefix owner
+            ],
+        ],
     ];
 }
