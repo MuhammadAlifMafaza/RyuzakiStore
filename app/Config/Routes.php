@@ -2,34 +2,37 @@
 
 namespace Config;
 
-// Create a new instance of our RouteCollection class.
-use CodeIgniter\Config\BaseConfig;
-use CodeIgniter\Router\RouteCollection;
-
 $routes = Services::routes();
 
-// Load the system's routing file first, so that the app and ENVIRONMENT can override as needed.
+// Load the system's routing file first
 if (file_exists(SYSTEMPATH . 'Config/Routes.php')) {
     require SYSTEMPATH . 'Config/Routes.php';
 }
 
-// Define your routes here
-// Define your routes here
-$routes->get('/', 'CustomerController::index'); // Halaman home customer
-$routes->get('/login', 'Login::login'); // Halaman login
-$routes->post('/auth/loginProcess', 'Login::loginProcess'); // Proses login
-$routes->get('/auth/logout', 'Login::logout'); // Proses logout
+// Default route untuk halaman utama
+$routes->get('/', 'CustomerController::index'); // Halaman home untuk semua pengguna
 
-// Kelompokkan rute untuk admin
-$routes->group('admin', function($routes) {
-    $routes->get('dashboard', 'AdminController::index'); // Halaman dashboard admin
-    // Tambahkan rute admin lainnya di sini
+// Halaman login dan logout
+$routes->get('/login', 'AuthController::login');
+$routes->post('/auth/loginProcess', 'AuthController::loginProcess');
+$routes->get('/auth/logout', 'AuthController::logout');
+
+// Kelompokkan rute untuk admin dengan filter autentikasi
+$routes->group('admin', ['filter' => 'auth:admin'], function ($routes) {
+    $routes->get('/', 'AdminController::index'); // Dashboard admin (menggunakan index sebagai halaman dashboard)
+    // Rute admin lainnya
 });
 
-// Kelompokkan rute untuk customer
-$routes->group('customer', function($routes) {
-    $routes->get('home', 'CustomerController::index'); // Halaman dashboard customer
-    // Tambahkan rute customer lainnya di sini
+// Kelompokkan rute untuk owner dengan filter autentikasi
+$routes->group('owner', ['filter' => 'auth:owner'], function ($routes) {
+    $routes->get('/', 'OwnerController::index'); // Dashboard owner (menggunakan index sebagai halaman dashboard)
+    // Rute owner lainnya
 });
 
-// Add more routes as needed
+// Rute untuk customer tanpa autentikasi
+$routes->group('customer', function ($routes) {
+    $routes->get('/', 'CustomerController::index'); // Halaman utama untuk customer
+    $routes->get('login', 'AuthController::login'); // Halaman login untuk customer
+    $routes->post('loginProcess', 'AuthController::loginProcess'); // Proses login untuk customer
+    $routes->get('logout', 'AuthController::logout'); // Logout melalui AuthController
+});

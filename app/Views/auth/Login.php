@@ -30,7 +30,7 @@
                                     <?php endif; ?>
                                     <form class="user" action="/auth/loginProcess" method="post">
                                         <div class="form-group">
-                                            <input type="text" class="form-control form-control-user" id="identifier" name="identifier" placeholder="Enter Email or Username..." required>
+                                            <input type="text" class="form-control form-control-user" id="identifier" name="identifier" placeholder="Masukkan Email atau Username Anda..." required>
                                         </div>
                                         <div class="form-group">
                                             <input type="password" class="form-control form-control-user" id="password" name="password" placeholder="Password" required>
@@ -39,10 +39,10 @@
                                     </form>
                                     <hr>
                                     <div class="text-center">
-                                        <a class="small" href="forgot-password.html">Forgot Password?</a>
+                                        <a class="small" href="forgot-password.html">Lupa Password?</a>
                                     </div>
                                     <div class="text-center">
-                                        <a class="small" href="register.html">Create an Account!</a>
+                                        <a class="small" href="register.html">Buat Akun Baru!</a>
                                     </div>
                                 </div>
                             </div>
