@@ -11,7 +11,7 @@ class UsersSeeder extends Seeder
         // Data yang akan dimasukkan ke dalam tabel users
         $data = [
             [
-                'id_user' => 'ADMN-0001',
+                'id_user' => 'ADMN-001',
                 'username' => 'admin',
                 'email'    => 'admin@example.com',
                 'password' => password_hash('admin123', PASSWORD_DEFAULT), // Hash password
@@ -20,7 +20,7 @@ class UsersSeeder extends Seeder
                 'updated_at' => date('Y-m-d H:i:s'),
             ],
             [
-                'id_user' => 'ADMN-0002',
+                'id_user' => 'ADMN-002',
                 'username' => 'admin2',
                 'email'    => 'admin2@example.com',
                 'password' => password_hash('admin', PASSWORD_DEFAULT), // Hash password
@@ -29,7 +29,7 @@ class UsersSeeder extends Seeder
                 'updated_at' => date('Y-m-d H:i:s'),
             ],
             [
-                'id_user' => 'CSTMR-0001',
+                'id_user' => 'CSTMR-001',
                 'username' => 'customer1',
                 'email'    => 'customer1@example.com',
                 'password' => password_hash('customer123', PASSWORD_DEFAULT), // Hash password
@@ -38,7 +38,7 @@ class UsersSeeder extends Seeder
                 'updated_at' => date('Y-m-d H:i:s'),
             ],
             [
-                'id_user' => 'CSTMR-0002',
+                'id_user' => 'CSTMR-002',
                 'username' => 'customer2',
                 'email'    => 'customer2@example.com',
                 'password' => password_hash('customer123', PASSWORD_DEFAULT), // Hash password

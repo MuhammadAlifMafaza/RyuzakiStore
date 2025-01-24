@@ -32,6 +32,7 @@ class AuthFilter implements FilterInterface
             'customer' => 'customer'
         ];
 
+        // Periksa apakah role pengguna sesuai dengan segmen URI
         if (isset($validSegments[$userRole]) && $firstSegment !== $validSegments[$userRole]) {
             return redirect()->to('/unauthorized')->with('msg', 'Anda tidak memiliki izin untuk mengakses halaman ini.');
         }

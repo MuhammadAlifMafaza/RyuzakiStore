@@ -2,7 +2,7 @@
 
 namespace App\Controllers;
 
-use App\Models\~UserModel;
+use App\Models\UserModel;
 use CodeIgniter\Controller;
 
 class AuthController extends Controller
@@ -43,7 +43,16 @@ class AuthController extends Controller
                 ]);
 
                 // Redirect ke halaman sesuai role
-                return redirect()->to('/' . $user['role'] . '/dashboard');
+                switch ($user['role']) {
+                    case 'admin':
+                        return redirect()->to('/admin'); // Arahkan ke halaman admin
+                    case 'owner':
+                        return redirect()->to('/owner'); // Arahkan ke halaman owner
+                    case 'customer':
+                        return redirect()->to('/customer'); // Arahkan ke halaman customer
+                    default:
+                        return redirect()->to('/'); // Arahkan ke halaman utama jika tidak ada peran yang cocok
+                }
             } else {
                 $session->setFlashdata('msg', 'Password salah.');
                 return redirect()->to('/login')->withInput();
@@ -89,10 +98,10 @@ class AuthController extends Controller
         // Tentukan prefix berdasarkan role
         switch ($role) {
             case 'admin':
-                $prefix = 'ADM';
+                $prefix = 'ADMN';
                 break;
             case 'owner':
-                $prefix = 'OWN';
+                $prefix = 'OWNR';
                 break;
             case 'customer':
                 $prefix = 'CST';
@@ -103,9 +112,12 @@ class AuthController extends Controller
         }
 
         // Hitung jumlah user berdasarkan role untuk menentukan nomor ID
-        $lastUser = $model->where('role', $role)->orderBy('id_user', 'DESC')->first();
-        $lastNumber = $lastUser ? (int)substr($lastUser['id_user'], 4) : 0;
-        $newId = sprintf('%s-%03d', $prefix, $lastNumber + 1);
+        $lastUser  = $model->where('role', $role)->orderBy('id_user', 'DESC')->first();
+        $lastNumber = $lastUser  ? (int)substr($lastUser['id_user'], 4) : 0; // Ambil nomor urut dari ID
+        $newId = sprintf('%s-%03d', $prefix, $lastNumber + 1); // Buat ID baru
+
+        // Debugging: Tampilkan nilai ID baru
+        log_message('debug', 'New ID: ' . $newId);
 
         // Pastikan ID tidak duplikat
         if ($model->find($newId)) {
@@ -129,7 +141,7 @@ class AuthController extends Controller
         }
 
         // Validasi email dan username
-        $existingUser = $model->where('email', $data['email'])
+        $existingUser  = $model->where('email', $data['email'])
             ->orWhere('username', $data['username'])
             ->first();
 
