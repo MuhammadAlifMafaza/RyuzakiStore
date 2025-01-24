@@ -16,7 +16,7 @@ $routes->get('/', 'CustomerController::index'); // Halaman home untuk semua peng
 $routes->get('/login', 'AuthController::login');
 $routes->post('/auth/loginProcess', 'AuthController::loginProcess');
 $routes->get('/auth/logout', 'AuthController::logout');
-$routes->get('/unauthorized', 'AuthController::unauthorized'); // Halaman jika akses tidak diizinkan
+$routes->get('/unauthorized', 'AuthController::unauthorized');
 
 // Kelompokkan rute untuk admin dengan filter autentikasi
 $routes->group('admin', ['filter' => 'auth:admin'], function ($routes) {
