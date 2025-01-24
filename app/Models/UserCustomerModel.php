@@ -6,71 +6,90 @@ use CodeIgniter\Model;
 
 class UserCustomerModel extends Model
 {
-    protected $table = 'users'; // Nama tabel utama
+    protected $table = 'users';
     protected $primaryKey = 'id_user';
+    protected $allowedFields = ['id_user', 'username', 'email', 'password', 'role', 'created_at', 'updated_at'];
+ 
+    // Relasi dengan tabel customer_details
+    protected $customerDetailsTable = 'customer_details';
 
-    /**
-     * Fungsi untuk mendapatkan data gabungan antara tabel `users` dan `customer_details`
-     * 
-     * @param string|null $id_user
-     * @return array|null
-     */
-    public function getUserWithDetails($id_user = null)
+    // Menentukan relasi dengan customer_details
+    public function getCustomerDetails($id_user)
     {
-        $builder = $this->db->table('users')
-            ->select('users.id_user, users.username, users.email, users.role, customer_details.full_name, customer_details.phone_number, customer_details.address, customer_details.membership_level, customer_details.total_spent')
-            ->join('customer_details', 'customer_details.id_user = users.id_user', 'left');
+        return $this->db->table($this->customerDetailsTable)
+            ->where('id_user', $id_user)
+            ->get()
+            ->getRowArray();
+    }
 
-        if ($id_user) {
-            $builder->where('users.id_user', $id_user);
-            return $builder->get()->getRowArray(); // Mengambil satu baris data
+    public function createUserWithDetails($userData, $customerDetailsData)
+    {
+        // Mulai transaksi untuk memastikan konsistensi
+        $this->db->transStart();
+
+        // Menyimpan data user
+        $this->insert($userData);
+
+        // Menambahkan detail pelanggan setelah user dibuat
+        $customerDetailsData['id_user'] = $userData['id_user'];  // Pastikan id_user diisi
+        $this->db->table($this->customerDetailsTable)->insert($customerDetailsData);
+
+        // Menyelesaikan transaksi
+        $this->db->transComplete();
+
+        if ($this->db->transStatus() === false) {
+            // Jika transaksi gagal, rollback dan kembalikan false
+            return false;
         }
 
-        return $builder->get()->getResultArray(); // Mengambil semua baris data
+        return true;
     }
 
-    /**
-     * Fungsi untuk menambahkan data ke dalam kedua tabel (users & customer_details)
-     * 
-     * @param array $userData
-     * @param array $customerData
-     * @return bool
-     */
-    public function insertUserAndDetails(array $userData, array $customerData)
+    public function updateUserDetails($id_user, $userData, $customerDetailsData)
     {
-        $this->db->transStart(); // Memulai transaksi
+        // Mulai transaksi untuk memastikan konsistensi
+        $this->db->transStart();
 
-        // Masukkan data ke tabel `users`
-        $this->db->table('users')->insert($userData);
+        // Update data user
+        $this->update($id_user, $userData);
 
-        // Masukkan data ke tabel `customer_details`
-        $this->db->table('customer_details')->insert($customerData);
+        // Update data detail pelanggan
+        $this->db->table($this->customerDetailsTable)
+            ->where('id_user', $id_user)
+            ->update($customerDetailsData);
 
-        $this->db->transComplete(); // Selesaikan transaksi
+        // Menyelesaikan transaksi
+        $this->db->transComplete();
 
-        return $this->db->transStatus(); // Kembalikan status transaksi
+        if ($this->db->transStatus() === false) {
+            // Jika transaksi gagal, rollback dan kembalikan false
+            return false;
+        }
+
+        return true;
     }
 
-    /**
-     * Fungsi untuk mengupdate data user dan detail customer
-     * 
-     * @param string $id_user
-     * @param array $userData
-     * @param array $customerData
-     * @return bool
-     */
-    public function updateUserAndDetails($id_user, array $userData, array $customerData)
+    public function deleteUserWithDetails($id_user)
     {
-        $this->db->transStart(); // Memulai transaksi
+        // Mulai transaksi untuk memastikan konsistensi
+        $this->db->transStart();
 
-        // Update data pada tabel `users`
-        $this->db->table('users')->update($userData, ['id_user' => $id_user]);
+        // Hapus data detail pelanggan
+        $this->db->table($this->customerDetailsTable)
+            ->where('id_user', $id_user)
+            ->delete();
 
-        // Update data pada tabel `customer_details`
-        $this->db->table('customer_details')->update($customerData, ['id_user' => $id_user]);
+        // Hapus data user
+        $this->delete($id_user);
 
-        $this->db->transComplete(); // Selesaikan transaksi
+        // Menyelesaikan transaksi
+        $this->db->transComplete();
 
-        return $this->db->transStatus(); // Kembalikan status transaksi
+        if ($this->db->transStatus() === false) {
+            // Jika transaksi gagal, rollback dan kembalikan false
+            return false;
+        }
+
+        return true;
     }
 }
