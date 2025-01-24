@@ -8,11 +8,23 @@ class CreateAdminDetailsTable extends Migration
 {
     public function up()
     {
-        //
+        $this->forge->addField([
+            'id_user'      => ['type' => 'CHAR', 'constraint' => 12, 'null' => false],
+            'full_name'    => ['type' => 'VARCHAR', 'constraint' => 255, 'null' => true],
+            'phone_number' => ['type' => 'VARCHAR', 'constraint' => 15, 'null' => true],
+            'address'      => ['type' => 'TEXT', 'null' => true],
+            'department'   => ['type' => 'VARCHAR', 'constraint' => 100, 'null' => true],
+        ]);
+
+        $this->forge->addPrimaryKey('id_user');
+        $this->forge->addUniqueKey('phone_number'); // Tambahkan Unique Key
+        $this->forge->addForeignKey('id_user', 'users', 'id_user', 'CASCADE', 'CASCADE');
+        $this->forge->createTable('admin_details');
     }
+
 
     public function down()
     {
-        //
+        $this->forge->dropTable('admin_details');
     }
 }
