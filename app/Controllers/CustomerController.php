@@ -3,17 +3,17 @@
 namespace App\Controllers;
 
 use CodeIgniter\Controller;
-use App\Models\CustomerModel; // Pastikan Anda memiliki model ini untuk berinteraksi dengan database
+use App\Models\UserCustomerModel; // Menggunakan model yang sudah dibuat
 
 class CustomerController extends Controller
 {
     protected $session;
-    protected $customerModel;
+    protected $userCustomerModel;
 
     public function __construct()
     {
         $this->session = session(); // Inisialisasi session
-        $this->customerModel = new CustomerModel(); // Inisialisasi model customer
+        $this->userCustomerModel = new UserCustomerModel(); // Inisialisasi model UserCustomer
     }
 
     /**
@@ -39,16 +39,62 @@ class CustomerController extends Controller
             return redirect()->to('/login');
         }
 
-        // Ambil data user dari database
+        // Ambil ID user dari session
         $customerId = $this->session->get('user_id'); // ID user dari session
-        $customer = $this->customerModel->find($customerId); // Cari data customer
+        
+        // Ambil data pengguna dari tabel users
+        $user = $this->userCustomerModel->find($customerId);
 
+        // Ambil data detail pelanggan dari tabel customer_details
+        $customerDetails = $this->userCustomerModel->getCustomerDetails($customerId);
+
+        // Gabungkan data pengguna dan detail pelanggan
         $data = [
             'isLoggedIn' => true,
-            'customer' => $customer, // Data customer yang diambil dari database
+            'user' => $user, // Data user yang diambil dari tabel users
+            'customerDetails' => $customerDetails, // Data detail pelanggan
         ];
 
         return view('customer/profile', $data);
+    }
+
+    /**
+     * Update profil customer
+     */
+    public function updateProfile()
+    {
+        if (!$this->session->get('isLoggedIn')) {
+            return redirect()->to('/login');
+        }
+
+        // Ambil ID user dari session
+        $customerId = $this->session->get('user_id');
+        
+        // Ambil data yang dikirim dari form
+        $userData = [
+            'username' => $this->request->getPost('username'),
+            'email' => $this->request->getPost('email'),
+            'updated_at' => date('Y-m-d H:i:s')
+        ];
+
+        $customerDetailsData = [
+            'full_name' => $this->request->getPost('full_name'),
+            'phone_number' => $this->request->getPost('phone_number'),
+            'address' => $this->request->getPost('address'),
+            'membership_level' => $this->request->getPost('membership_level'),
+            'total_spent' => $this->request->getPost('total_spent')
+        ];
+
+        // Update data user dan detail customer
+        $updateStatus = $this->userCustomerModel->updateUserDetails($customerId, $userData, $customerDetailsData);
+
+        if ($updateStatus) {
+            // Jika update berhasil
+            return redirect()->to('/customer/profile')->with('success', 'Profile updated successfully!');
+        } else {
+            // Jika update gagal
+            return redirect()->to('/customer/profile')->with('error', 'Failed to update profile!');
+        }
     }
 
     /**
