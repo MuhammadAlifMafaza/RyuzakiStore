@@ -1,4 +1,5 @@
-<?= $this->include('layout/header') ?>
+<!-- app\Views\customer\home.php -->
+<?= $this->include('customer/layout/header') ?>
 
 <div class="container mt-5">
     <h1>Welcome to Ryugazaki Store!</h1>
@@ -13,14 +14,14 @@
         </div>
         <div class="carousel-inner">
             <div class="carousel-item active">
-                <img src="<?= base_url('public/img/slide1.jpg') ?>" class="d-block w-100" alt="Slide 1">
+                <img src="<?= base_url('/public/img/slide1.gif') ?>" class="d-block w-100" alt="Slide 1">
                 <div class="carousel-caption d-none d-md-block">
                     <h5>New Fashion Collection</h5>
                     <p>Discover our latest trends.</p>
                 </div>
             </div>
             <div class="carousel-item">
-                <img src="<?= base_url('public/img/slide2.jpg') ?>" class="d-block w-100" alt="Slide 2">
+                <img src="<?= base_url('/public/img/slide2.jpg') ?>" class="d-block w-100" alt="Slide 2">
                 <div class="carousel-caption d-none d-md-block">
                     <h5>Affordable Style</h5>
                     <p>Look great without breaking the bank.</p>
@@ -43,4 +44,4 @@
     </div>
 </div>
 
-<?= $this->include('layout/footer') ?>
+<?= $this->include('customer/layout/footer') ?>

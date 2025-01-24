@@ -1,3 +1,4 @@
+<!-- app\Views\auth\Register.php -->
 <!DOCTYPE html>
 <html lang="en">
 

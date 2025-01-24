@@ -10,36 +10,25 @@ class AuthFilter implements FilterInterface
 {
     public function before(RequestInterface $request, $arguments = null)
     {
-        $session = session();
+        // Ambil role dari session
+        $role = session()->get('role');
 
-        // 1. Periksa apakah pengguna sudah login
-        if (!$session->has('loggedIn') || !$session->get('loggedIn')) {
-            return redirect()->to('/login')->with('msg', 'Silakan login terlebih dahulu.');
+        // Pastikan pengguna sudah login
+        if (!$role) {
+            return redirect()->to('/login');
         }
 
-        // 2. Periksa apakah role pengguna sesuai dengan argumen filter
-        $userRole = $session->get('role');
-        if (!empty($arguments) && !in_array($userRole, $arguments)) {
-            return redirect()->to('/unauthorized')->with('msg', 'Anda tidak memiliki akses ke halaman tersebut.');
+        // Pastikan role sesuai dengan yang dibutuhkan
+        if (in_array($role, $arguments)) {
+            return;
         }
 
-        // 3. Validasi URI sesuai dengan role pengguna
-        $uri = service('uri');
-        $firstSegment = $uri->getSegment(1); // Ambil segmen pertama dari URI
-        $validSegments = [
-            'admin' => 'admin',
-            'owner' => 'owner',
-            'customer' => 'customer'
-        ];
-
-        // Periksa apakah role pengguna sesuai dengan segmen URI
-        if (isset($validSegments[$userRole]) && $firstSegment !== $validSegments[$userRole]) {
-            return redirect()->to('/unauthorized')->with('msg', 'Anda tidak memiliki izin untuk mengakses halaman ini.');
-        }
+        // Jika role tidak cocok, redirect ke halaman home
+        return redirect()->to('/');
     }
 
     public function after(RequestInterface $request, ResponseInterface $response, $arguments = null)
     {
-        // Tidak ada yang perlu dilakukan setelah request selesai
+        // Tidak ada aksi setelah request
     }
 }

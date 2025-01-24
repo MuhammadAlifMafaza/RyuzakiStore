@@ -7,157 +7,108 @@ use CodeIgniter\Controller;
 
 class AuthController extends Controller
 {
-    public function login()
-    {
-        return view('auth/login'); // Menampilkan halaman login
-    }
-
-    public function loginProcess()
-    {
-        $session = session();
-        $model = new UserModel();
-
-        // Ambil data dari form
-        $identifier = $this->request->getPost('identifier');
-        $password = $this->request->getPost('password');
-
-        // Validasi input
-        if (empty($identifier) || empty($password)) {
-            $session->setFlashdata('msg', 'Semua kolom wajib diisi.');
-            return redirect()->to('/login')->withInput();
-        }
-
-        // Cari pengguna berdasarkan email atau username
-        $user = $model->where('email', $identifier)
-            ->orWhere('username', $identifier)
-            ->first();
-
-        if ($user) {
-            // Verifikasi password
-            if (password_verify($password, $user['password'])) {
-                // Simpan sesi pengguna
-                $session->set([
-                    'loggedIn' => true,
-                    'userId' => $user['id_user'],
-                    'role' => $user['role'],
-                ]);
-
-                // Redirect ke halaman sesuai role
-                switch ($user['role']) {
-                    case 'admin':
-                        return redirect()->to('/admin'); // Arahkan ke halaman admin
-                    case 'owner':
-                        return redirect()->to('/owner'); // Arahkan ke halaman owner
-                    case 'customer':
-                        return redirect()->to('/customer'); // Arahkan ke halaman customer
-                    default:
-                        return redirect()->to('/'); // Arahkan ke halaman utama jika tidak ada peran yang cocok
-                }
-            } else {
-                $session->setFlashdata('msg', 'Password salah.');
-                return redirect()->to('/login')->withInput();
-            }
-        } else {
-            $session->setFlashdata('msg', 'Email atau Username tidak ditemukan.');
-            return redirect()->to('/login')->withInput();
-        }
-    }
-
-    public function logout()
-    {
-        session()->destroy(); // Hapus semua sesi
-        return redirect()->to('/login')->with('msg', 'Anda berhasil logout.');
-    }
-
+    // Fungsi untuk registrasi akun
     public function register()
     {
-        $uri = service('uri');
-        $defaultRole = null;
+        $validation = \Config\Services::validation();
+        if ($this->request->getMethod() === 'post') {
+            $data = $this->request->getPost();
 
-        // Tentukan default role berdasarkan URI saat ini
-        if ($uri->getSegment(1) === 'admin') {
-            $defaultRole = 'admin';
-        } elseif ($uri->getSegment(1) === 'owner') {
-            $defaultRole = 'owner';
-        } elseif ($uri->getSegment(1) === 'customer') {
-            $defaultRole = 'customer';
+            // Validasi input
+            $validation->setRules([
+                'username' => 'required|min_length[3]|max_length[255]|is_unique[users.username]',
+                'email'    => 'required|valid_email|is_unique[users.email]',
+                'password' => 'required|min_length[8]',
+            ]);
+
+            if (!$validation->run($data)) {
+                return redirect()->back()->withInput()->with('errors', $validation->getErrors());
+            }
+
+            // Hash password
+            $userModel = new UserModel();
+            $userData = [
+                'username' => $data['username'],
+                'email'    => $data['email'],
+                'password' => password_hash($data['password'], PASSWORD_BCRYPT),
+                'role'     => 'user', // Atur sesuai dengan role yang diinginkan
+                'created_at' => date('Y-m-d H:i:s'),
+            ];
+
+            if ($userModel->save($userData)) {
+                return redirect()->to('/login')->with('message', 'Registration successful!');
+            } else {
+                return redirect()->back()->with('error', 'Failed to register. Please try again.');
+            }
         }
 
-        return view('auth/register', ['defaultRole' => $defaultRole]); // Menampilkan halaman register
+        return view('auth/register');
     }
 
-    public function registerProcess()
+    // Fungsi untuk menampilkan halaman login
+    public function login()
     {
-        $session = session();
-        $model = new UserModel();
-
-        // Ambil data dari form
-        $role = $this->request->getPost('role');
-        $prefix = '';
-
-        // Tentukan prefix berdasarkan role
-        switch ($role) {
-            case 'admin':
-                $prefix = 'ADMN';
-                break;
-            case 'owner':
-                $prefix = 'OWNR';
-                break;
-            case 'customer':
-                $prefix = 'CST';
-                break;
-            default:
-                $session->setFlashdata('msg', 'Role tidak valid.');
-                return redirect()->to('/register')->withInput();
-        }
-
-        // Hitung jumlah user berdasarkan role untuk menentukan nomor ID
-        $lastUser  = $model->where('role', $role)->orderBy('id_user', 'DESC')->first();
-        $lastNumber = $lastUser  ? (int)substr($lastUser['id_user'], 4) : 0; // Ambil nomor urut dari ID
-        $newId = sprintf('%s-%03d', $prefix, $lastNumber + 1); // Buat ID baru
-
-        // Debugging: Tampilkan nilai ID baru
-        log_message('debug', 'New ID: ' . $newId);
-
-        // Pastikan ID tidak duplikat
-        if ($model->find($newId)) {
-            $session->setFlashdata('msg', 'ID pengguna sudah ada. Coba lagi.');
-            return redirect()->to('/register')->withInput();
-        }
-
-        // Buat data untuk disimpan
-        $data = [
-            'id_user' => $newId,
-            'username' => $this->request->getPost('username'),
-            'email' => $this->request->getPost('email'),
-            'password' => password_hash($this->request->getPost('password'), PASSWORD_DEFAULT),
-            'role' => $role,
-        ];
-
-        // Validasi input
-        if (empty($data['username']) || empty($data['email']) || empty($data['password']) || empty($data['role'])) {
-            $session->setFlashdata('msg', 'Semua kolom wajib diisi.');
-            return redirect()->to('/register')->withInput();
-        }
-
-        // Validasi email dan username
-        $existingUser  = $model->where('email', $data['email'])
-            ->orWhere('username', $data['username'])
-            ->first();
-
-        if ($existingUser) {
-            $session->setFlashdata('msg', 'Email atau Username sudah digunakan.');
-            return redirect()->to('/register')->withInput();
-        }
-
-        // Simpan pengguna baru
-        $model->insert($data);
-        $session->setFlashdata('msg', 'Registrasi berhasil. Silakan login.');
-        return redirect()->to('/login');
+        return view('auth/login'); // Menampilkan form login
     }
 
-    public function unauthorized()
+    // Fungsi untuk memproses login
+    public function loginProcess()
     {
-        return view('errors/unauthorized'); // Menampilkan halaman unauthorized
+        if ($this->request->getMethod() === 'post') {
+            $data = $this->request->getPost();
+            $validation = \Config\Services::validation();
+
+            // Validasi input
+            $validation->setRules([
+                'username_or_email' => 'required',
+                'password' => 'required|min_length[8]',
+            ]);
+
+            if (!$validation->run($data)) {
+                return redirect()->back()->withInput()->with('errors', $validation->getErrors());
+            }
+
+            $userModel = new UserModel();
+            $user = null;
+
+            // Cek apakah input yang diberikan adalah email atau username
+            if (filter_var($data['username_or_email'], FILTER_VALIDATE_EMAIL)) {
+                // Jika email, cari berdasarkan email
+                $user = $userModel->where('email', $data['username_or_email'])->first();
+            } else {
+                // Jika bukan email, anggap itu username
+                $user = $userModel->where('username', $data['username_or_email'])->first();
+            }
+
+            // Cek apakah user ditemukan dan password cocok
+            if ($user && password_verify($data['password'], $user['password'])) {
+                // Set session untuk user
+                session()->set('user_id', $user['id_user']);
+                session()->set('username', $user['username']);
+                session()->set('role', $user['role']);  // Menyimpan role dalam session
+
+                // Pengarahan berdasarkan role
+                switch ($user['role']) {
+                    case 'admin':
+                        return redirect()->to('/admin');  // Pengguna admin diarahkan ke /admin
+                    case 'owner':
+                        return redirect()->to('/owner');  // Pengguna owner diarahkan ke /owner
+                    case 'user':
+                    default:
+                        return redirect()->to('/customer');  // Pengguna customer diarahkan ke /customer
+                }
+            } else {
+                return redirect()->back()->with('error', 'Invalid credentials');
+            }
+        }
+
+        return redirect()->to('/login'); // Jika bukan post, arahkan kembali ke halaman login
+    }
+
+    // Fungsi untuk logout
+    public function logout()
+    {
+        session()->destroy(); // Menghapus semua session
+        return redirect()->to('/login')->with('message', 'Logged out successfully');
     }
 }
