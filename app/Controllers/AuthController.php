@@ -2,7 +2,7 @@
 
 namespace App\Controllers;
 
-use App\Models\auth\UserModel;
+use App\Models\~UserModel;
 use CodeIgniter\Controller;
 
 class AuthController extends Controller
