@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Forgot Password</title>
+    <title>Reset Password</title>
     <!-- Add SB Admin 2 CSS -->
     <link href="<?= base_url('assets/vendor/bootstrap/css/bootstrap.min.css') ?>" rel="stylesheet">
     <link href="<?= base_url('assets/css/sb-admin-2.min.css') ?>" rel="stylesheet">
@@ -22,18 +22,23 @@
                         <div class="col-lg-6">
                             <div class="p-5">
                                 <div class="text-center">
-                                    <h1 class="h4 text-gray-900 mb-4">Forgot Password</h1>
+                                    <h1 class="h4 text-gray-900 mb-4">Reset Your Password</h1>
                                 </div>
 
-                                <form action="<?= site_url('/auth/forgot-password') ?>" method="post">
+                                <form action="<?= site_url('/auth/reset-password') ?>" method="post">
                                     <?= csrf_field() ?>
 
                                     <div class="form-group">
-                                        <label for="email_or_username">Email or Username</label>
-                                        <input type="text" id="email_or_username" name="email_or_username" class="form-control form-control-user" value="<?= old('email_or_username') ?>" required>
+                                        <label for="new_password">New Password</label>
+                                        <input type="password" id="new_password" name="new_password" class="form-control form-control-user" required>
                                     </div>
 
-                                    <button type="submit" class="btn btn-primary btn-user btn-block">Submit</button>
+                                    <div class="form-group">
+                                        <label for="confirm_password">Confirm Password</label>
+                                        <input type="password" id="confirm_password" name="confirm_password" class="form-control form-control-user" required>
+                                    </div>
+
+                                    <button type="submit" class="btn btn-primary btn-user btn-block">Reset Password</button>
 
                                     <?php if(session()->getFlashdata('error')): ?>
                                         <div class="alert alert-danger mt-3"><?= session()->getFlashdata('error') ?></div>

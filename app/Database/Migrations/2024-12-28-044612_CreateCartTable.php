@@ -13,10 +13,11 @@ class CreateCartTable extends Migration
                 'type' => 'CHAR',
                 'constraint' => '12',
             ],
-            'id_user' => [
-                'type' => 'CHAR',
-                'constraint' => '12',
-                'null' => true,
+            'id_user'    => [
+                'type' => 'INT',
+                'constraint' => 5,
+                'null' => false,
+                'auto_increment' => true,
             ],
             'id_product' => [
                 'type' => 'CHAR',

@@ -1,20 +1,27 @@
-<footer class="main-footer">
-  <strong>Copyright &copy; 2024-2025 | Muhammad Alif Mafaza - 23.230.0035</strong> All rights reserved.
+<!-- Footer -->
+<footer class="sticky-footer bg-white">
+    <div class="container my-auto">
+        <div class="copyright text-center my-auto">
+            <span>Copyright &copy; Ryuzaki Store 2024</span>
+        </div>
+    </div>
 </footer>
-
-<!-- Control Sidebar -->
-<aside class="control-sidebar control-sidebar-dark">
-</aside>
-
+<!-- End of Footer -->
 </div>
+<!-- End of Content Wrapper -->
+</div>
+<!-- End of Page Wrapper -->
+<a class="scroll-to-top rounded" href="#page-top">
+    <i class="fas fa-angle-up"></i>
+</a>
 
-<!-- jQuery -->
-<script src="<?= base_url('AdminLTE-3.2.0/plugins/jquery/jquery.min.js') ?>"></script>
-
-<!-- Bootstrap 4 -->
-<script src="<?= base_url('AdminLTE-3.2.0/plugins/bootstrap/js/bootstrap.bundle.min.js') ?>"></script>
-
-<!-- AdminLTE App -->
-<script src="<?= base_url('AdminLTE-3.2.0/dist/js/adminlte.min.js') ?>"></script>
+<script src="<?= base_url('sb-admin2/vendor/jquery/jquery.min.js') ?>"></script>
+<script src="<?= base_url('sb-admin2/vendor/bootstrap/js/bootstrap.bundle.min.js') ?>"></script>
+<script src="<?= base_url('sb-admin2/vendor/jquery-easing/jquery.easing.min.js') ?>"></script>
+<script src="<?= base_url('sb-admin2/js/sb-admin-2.min.js') ?>"></script>
+<script src="<?= base_url('sb-admin2/vendor/chart.js/Chart.min.js') ?>"></script>
+<script src="<?= base_url('sb-admin2/js/demo/chart-area-demo.js') ?>"></script>
+<script src="<?= base_url('sb-admin2/js/demo/chart-pie-demo.js') ?>"></script>
 </body>
+
 </html>

@@ -1,4 +1,3 @@
-<!-- app\Views\auth\Register.php -->
 <!DOCTYPE html>
 <html lang="en">
 
@@ -14,47 +13,63 @@
 <body class="bg-gradient-primary">
 
     <div class="container">
+        <!-- Outer Row -->
         <div class="row justify-content-center">
-            <div class="col-lg-7">
+            <div class="col-lg-5">
                 <div class="card o-hidden border-0 shadow-lg my-5">
                     <div class="card-body p-0">
                         <div class="row">
                             <div class="col-lg-12">
                                 <div class="p-5">
-                                    <div class="text-center">
-                                        <h1 class="h4 text-gray-900 mb-4">Buat Akun Baru</h1>
-                                    </div>
-                                    <?php if (session()->getFlashdata('msg')): ?>
-                                        <div class="alert alert-danger" role="alert">
-                                            <?= session()->getFlashdata('msg') ?>
+                                    <h1 class="h4 text-gray-900 mb-4">Membuat Akun Baru!</h1>
+                                    <!-- Pesan Singkat / Flash Messages -->
+                                    <?php if (session()->getFlashdata('success')): ?>
+                                        <div class="alert alert-success" role="alert">
+                                            <?= session()->getFlashdata('success') ?>
                                         </div>
                                     <?php endif; ?>
-                                    <form class="user" action="<?= base_url('auth/registerProcess') ?>" method="post">
-                                        <input type="hidden" name="role" value="<?= isset($defaultRole) ? $defaultRole : 'customer' ?>">
+                                    <?php if (session()->getFlashdata('error')): ?>
+                                        <div class="alert alert-danger" role="alert">
+                                            <?= session()->getFlashdata('error') ?>
+                                        </div>
+                                    <?php endif; ?>
+                                    <!-- Form Registrasi -->
+                                    <form class="user" method="POST" action="<?= site_url('register/process') ?>">
+                                        <?= csrf_field() ?>
+                                        <!-- Username -->
                                         <div class="form-group">
-                                            <input type="text" class="form-control form-control-user" name="username" placeholder="Username" required>
+                                            <input type="text" class="form-control form-control-user" id="username" name="username" placeholder="Username" value="<?= old('username') ?>" required>
+                                            <?php if (isset($errors['username'])): ?>
+                                                <div class="text-danger small"><?= $errors['username'] ?></div>
+                                            <?php endif; ?>
                                         </div>
+                                        <!-- Email -->
                                         <div class="form-group">
-                                            <input type="email" class="form-control form-control-user" name="email" placeholder="Email Address" required>
+                                            <input type="email" class="form-control form-control-user" id="email" name="email" placeholder="Email Address" value="<?= old('email') ?>" required>
+                                            <?php if (isset($errors['email'])): ?>
+                                                <div class="text-danger small"><?= $errors['email'] ?></div>
+                                            <?php endif; ?>
                                         </div>
-                                        <div class="form-group row">
-                                            <div class="col-sm-6 mb-3 mb-sm-0">
-                                                <input type="password" class="form-control form-control-user" name="password" placeholder="Password" required>
-                                            </div>
-                                            <div class="col-sm-6">
-                                                <input type="password" class="form-control form-control-user" name="repeat_password" placeholder="Repeat Password" required>
-                                            </div>
+                                        <!-- Password -->
+                                        <div class="form-group">
+                                            <input type="password" class="form-control form-control-user" id="password" name="password" placeholder="Password" required>
+                                            <?php if (isset($errors['password'])): ?>
+                                                <div class="text-danger small"><?= $errors['password'] ?></div>
+                                            <?php endif; ?>
                                         </div>
-                                        <button type="submit" class="btn btn-primary btn-user btn-block">
-                                            Register Account
-                                        </button>
+                                        <!-- Repeat Password -->
+                                        <div class="form-group">
+                                            <input type="password" class="form-control form-control-user" id="repeat_password" name="repeat_password" placeholder="Repeat Password" required>
+                                            <?php if (isset($errors['repeat_password'])): ?>
+                                                <div class="text-danger small"><?= $errors['repeat_password'] ?></div>
+                                            <?php endif; ?>
+                                        </div>
+                                        <button type="submit" class="btn btn-primary btn-user btn-block">Register Akun</button>
                                     </form>
                                     <hr>
+                                    <!-- Link Login -->
                                     <div class="text-center">
-                                        <a class="small" href="#">Lupa Password?</a>
-                                    </div>
-                                    <div class="text-center">
-                                        <a class="small" href="<?= base_url('auth/login') ?>">Sudah Punya Akun? Login!</a>
+                                        <a class="small" href="<?= site_url('login'); ?>">Sudah Punya Akun? Login!</a>
                                     </div>
                                 </div>
                             </div>
