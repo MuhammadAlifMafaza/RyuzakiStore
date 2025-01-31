@@ -10,10 +10,10 @@ $routes->get('/', 'CustomerController::index');
 
 
 $routes->get('login', 'AuthController::login');
-$routes->post('process-login', 'AuthController::processLogin'); // for POST login
+$routes->post('processLogin', 'AuthController::processLogin'); // for POST login
 $routes->get('logout', 'AuthController::logout');
 $routes->get('register', 'AuthController::register');
-$routes->post('process-register', 'AuthController::processRegister'); // for POST registration
+$routes->post('processRegister', 'AuthController::processRegister'); // for POST registration
 
 $routes->get('forgot-password', 'AuthController::forgotPasswordStep1');
 $routes->post('verify-user', 'AuthController::verifyUser');  // For POST request
