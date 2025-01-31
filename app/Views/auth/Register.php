@@ -67,7 +67,9 @@
                                         <button type="submit" class="btn btn-primary btn-user btn-block">Register Akun</button>
                                     </form>
                                     <hr>
-                                    <!-- Link Login -->
+                                    <div class="text-center">
+                                        <a class="small" href="<?= site_url('forgot-password'); ?>">Lupa Password?</a>
+                                    </div>
                                     <div class="text-center">
                                         <a class="small" href="<?= site_url('login'); ?>">Sudah Punya Akun? Login!</a>
                                     </div>

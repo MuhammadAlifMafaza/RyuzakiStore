@@ -1,10 +1,9 @@
-<footer class="bg-light py-4 mt-5">
-        <div class="container text-center">
-            <p class="mb-0">© <?= date('Y') ?> Ryugazaki Store. All rights reserved.</p>
-        </div>
-    </footer>
-    <!-- Bootstrap JS -->
-    <script src="<?= base_url('bootstrap-5.2.3/js/bootstrap.bundle.min.js') ?>"></script>
+<footer class="text-center py-3 bg-light mt-4">
+    <p>&copy; 2025 Fashion Store. All rights reserved.</p>
+</footer>
+
+<script src="<?= base_url("/assets/js/products.js")?>"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 
 </html>

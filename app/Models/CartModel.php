@@ -6,7 +6,7 @@ use CodeIgniter\Model;
 
 class CartModel extends Model
 {
-    protected $table = 'cart'; // Nama tabel
+    protected $table = 'cart';
     protected $primaryKey = 'id_cart';
     protected $allowedFields = ['id_cart', 'id_user', 'id_product', 'quantity', 'created_at'];
     protected $useTimestamps = true;

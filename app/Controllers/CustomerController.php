@@ -3,35 +3,41 @@
 namespace App\Controllers;
 
 use CodeIgniter\Controller;
-use App\Models\UserCustomerModel; // Menggunakan model yang sudah dibuat
+use App\Models\CustomerModel;
+use App\Models\ProductModel;
 
 class CustomerController extends Controller
 {
     protected $session;
-    protected $userCustomerModel;
+    protected $CustomerModel;
+    protected $ProductModel;
 
     public function __construct()
     {
-        $this->session = session(); // Inisialisasi session
-        $this->userCustomerModel = new UserCustomerModel(); // Inisialisasi model UserCustomer
+        $this->session = session();
+        $this->CustomerModel = new CustomerModel();
     }
 
-    /**
-     * Halaman utama customer
-     */
+    // halaman utama customer
     public function index()
     {
-        $data = [
-            'isLoggedIn' => $this->session->get('isLoggedIn'), // Cek apakah user login
-            'username' => $this->session->get('username'), // Nama user (jika login)
-        ];
-
-        return view('customer/home', $data);
+        return view('customer/home');
     }
 
-    /**
-     * Halaman profil customer
-     */
+    // checkout barang
+    public function checkout()
+    {
+        // Pastikan hanya customer yang bisa mengakses halaman ini
+        if (session()->get('role') !== 'customer') {
+            session()->setFlashdata('msg', 'Anda harus login sebagai customer untuk mengakses halaman ini.');
+            return redirect()->to('/login');
+        }
+
+        // Tampilkan halaman checkout
+        return view('customer/checkout');
+    }
+
+    // halaman profile
     public function profile()
     {
         if (!$this->session->get('isLoggedIn')) {
@@ -41,12 +47,12 @@ class CustomerController extends Controller
 
         // Ambil ID user dari session
         $customerId = $this->session->get('user_id'); // ID user dari session
-        
+
         // Ambil data pengguna dari tabel users
-        $user = $this->userCustomerModel->find($customerId);
+        $user = $this->CustomerModel->find($customerId);
 
         // Ambil data detail pelanggan dari tabel customer_details
-        $customerDetails = $this->userCustomerModel->getCustomerDetails($customerId);
+        $customerDetails = $this->CustomerModel->getCustomerDetails($customerId);
 
         // Gabungkan data pengguna dan detail pelanggan
         $data = [
@@ -58,9 +64,6 @@ class CustomerController extends Controller
         return view('customer/profile', $data);
     }
 
-    /**
-     * Update profil customer
-     */
     public function updateProfile()
     {
         if (!$this->session->get('isLoggedIn')) {
@@ -69,7 +72,7 @@ class CustomerController extends Controller
 
         // Ambil ID user dari session
         $customerId = $this->session->get('user_id');
-        
+
         // Ambil data yang dikirim dari form
         $userData = [
             'username' => $this->request->getPost('username'),
@@ -86,7 +89,7 @@ class CustomerController extends Controller
         ];
 
         // Update data user dan detail customer
-        $updateStatus = $this->userCustomerModel->updateUserDetails($customerId, $userData, $customerDetailsData);
+        $updateStatus = $this->CustomerModel->updateUserDetails($customerId, $userData, $customerDetailsData);
 
         if ($updateStatus) {
             // Jika update berhasil
@@ -95,14 +98,5 @@ class CustomerController extends Controller
             // Jika update gagal
             return redirect()->to('/customer/profile')->with('error', 'Failed to update profile!');
         }
-    }
-
-    /**
-     * Logout customer
-     */
-    public function logout()
-    {
-        $this->session->destroy(); // Hapus semua data session
-        return redirect()->to('/login'); // Redirect ke halaman login
     }
 }

@@ -6,7 +6,7 @@ use CodeIgniter\Model;
 
 class OrderItemModel extends Model
 {
-    protected $table = 'order_items'; // Tabel order_items
+    protected $table = 'order_items';
     protected $primaryKey = 'id_order_item';
     protected $allowedFields = ['id_order_item', 'id_order', 'id_product', 'quantity', 'price'];
 

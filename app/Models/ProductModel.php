@@ -9,21 +9,17 @@ class ProductModel extends Model
     protected $table = 'products'; // Nama tabel produk
     protected $primaryKey = 'id_product'; // Primary key untuk tabel produk
     protected $allowedFields = [
-        'id_product',
-        'product_name',
-        'description',
-        'image',
-        'price',
-        'stock_quantity',
-        'created_at',
-        'updated_at'
-    ]; // Kolom yang diizinkan untuk diinput
+        'id_product', 'product_name', 'category','tags', 'description',
+        'image', 'price', 'stock_quantity', 'created_at', 'updated_at',
+    ];
 
     protected $useTimestamps = true; // Mengaktifkan penggunaan timestamps untuk created_at dan updated_at
 
     // Menambahkan validasi data produk
     protected $validationRules = [
         'product_name' => 'required|min_length[3]|max_length[255]',
+        'category' => 'in_list[Atasan Pria,Atasan Wanita,Bawahan Pria,Bawahan Wanita]', // Enum validation
+        'tags' => 'permit_empty', // Set type can be empty
         'price' => 'required|decimal',
         'stock_quantity' => 'required|integer',
     ];
@@ -33,6 +29,9 @@ class ProductModel extends Model
             'required' => 'Product name is required.',
             'min_length' => 'Product name must be at least 3 characters.',
             'max_length' => 'Product name cannot exceed 255 characters.',
+        ],
+        'category' => [
+            'in_list' => 'Category must be one of the following: Atasan Pria, Atasan Wanita, Bawahan Pria, Bawahan Wanita.',
         ],
         'price' => [
             'required' => 'Price is required.',

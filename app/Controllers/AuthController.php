@@ -2,52 +2,48 @@
 
 namespace App\Controllers;
 
-use App\Controllers\BaseController;
-use App\Models\UserModel;
+use App\Models\CustomerModel;
+use CodeIgniter\Controller;
+use CodeIgniter\I18n\Time;
 
-class AuthController extends BaseController
+class AuthController extends Controller
 {
     public function login()
     {
         return view('auth/login');
     }
 
-    public function loginProcess()
+    public function processLogin()
     {
-        $identifier = $this->request->getPost('identifier');
-        $password = $this->request->getPost('password');
+        $validation = \Config\Services::validation();
+        $input = $this->request->getPost();
 
-        $userModel = new UserModel();
-        $user = $userModel->where('username', $identifier)
-            ->orWhere('email', $identifier)
-            ->first();
-
-        if ($user && password_verify($password, $user['password'])) {
-            session()->set([
-                'id_user' => $user['id_user'],
-                'username' => $user['username'],
-                'role' => $user['role'],
-                'isLoggedIn' => true,
-            ]);
-
-            // mengarahkan kehalaman masing2 berdasarkan role
-            switch ($user['role']) {
-                case 'admin':
-                    return redirect()->to('/admin/dashboard'); // Halaman admin
-                case 'owner':
-                    return redirect()->to('/owner/dashboard'); // Halaman owner
-                case 'customer':
-                    return redirect()->to('/customer/home'); // Halaman customer
-                default:
-                    session()->setFlashdata('msg', 'Role tidak dikenali!');
-                    return redirect()->to('/login');
-            }
+        // Validate input
+        if (!$this->validate([
+            'username' => 'required',
+            'password' => 'required',
+        ])) {
+            return view('auth/login', ['validation' => $this->validator]);
         }
 
-        session()->setFlashdata('msg', 'Username atau Email dan Password yang anda masukkan salah!');
-        return redirect()->back()->withInput();
-    }
+        $customerModel = new CustomerModel();
+        $customer = $customerModel->where('username', $input['username'])->first();
 
+        if ($customer && password_verify($input['password'], $customer['password'])) {
+            // User authenticated, store session data
+            session()->set([
+                'id_customer'   => $customer['id_customer'],
+                'username'      => $customer['username'],
+                'email'         => $customer['email'],
+                'logged_in'     => true,
+            ]);
+
+            return redirect()->to('/'); // Redirect to the home/dashboard page
+        }
+
+        // Invalid login attempt
+        return view('auth/login', ['error' => 'Invalid credentials']);
+    }
 
     public function logout()
     {
@@ -60,34 +56,113 @@ class AuthController extends BaseController
         return view('auth/register');
     }
 
-    public function registerProcess()
+    public function processRegister()
     {
-        $rules = [
-            'username' => 'required|min_length[8]|is_unique[users.username]',
-            'email' => 'required|valid_email|is_unique[users.email]',
-            'password' => 'required|min_length[4]',
-            'repeat_password' => 'required|matches[password]',
-        ];
+        $validation = \Config\Services::validation();
 
-        if (!$this->validate($rules)) {
-            return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
+        // Validate input
+        $input = $this->request->getPost();
+        if (!$this->validate([
+            'username' => 'required|is_unique[customer.username]',
+            'email'    => 'required|valid_email|is_unique[customer.email]',
+            'password' => 'required|min_length[6]',
+            'full_name' => 'required',
+        ])) {
+            return view('auth/register', ['validation' => $this->validator]);
         }
 
-        $role = $this->request->getPost('role') ?? 'customer'; // Role default adalah 'customer'
-        $userModel = new UserModel();
+        $customerModel = new CustomerModel();
 
-        // Generate unique ID based on role
-        $idUser = $userModel->generateUniqueId($role);
+        // Generate ID with a custom format: CUST + timestamp to ensure uniqueness
+        $id_customer = 'CUST' . strtoupper(uniqid('')); // Menggunakan uniqid() dengan prefix 'CUST'
 
-        $userModel->save([
-            'id_user' => $idUser,
-            'username' => $this->request->getPost('username'),
-            'email' => $this->request->getPost('email'),
-            'password' => password_hash($this->request->getPost('password'), PASSWORD_DEFAULT),
-            'role' => $role,
-        ]);
+        $data = [
+            'id_customer'    => $id_customer, // ID baru dengan format CUSTXXXXXX
+            'username'       => $input['username'],
+            'email'          => $input['email'],
+            'password'       => password_hash($input['password'], PASSWORD_DEFAULT), // Encrypt password
+            'full_name'      => $input['full_name'],
+            'created_at'     => Time::now(),
+            'updated_at'     => Time::now(),
+        ];
 
-        session()->setFlashdata('success', 'Pendaftaran berhasil. Silakan login.');
-        return redirect()->to('/login');
+        if ($customerModel->save($data)) {
+            return redirect()->to('/login');
+        }
+
+        return view('auth/register');
+    }
+
+    public function forgotPasswordStep1()
+    {
+        // Halaman form untuk input username atau email
+        return view('auth/ForgotPassword');
+    }
+
+    public function verifyUser()
+    {
+        $input = $this->request->getPost();
+        $validation = \Config\Services::validation();
+
+        if (!$this->validate([
+            'username_or_email' => 'required',
+        ])) {
+            return view('forgot_password_step1', ['validation' => $this->validator]);
+        }
+
+        $customerModel = new CustomerModel();
+        $usernameOrEmail = $input['username_or_email'];
+
+        // Mencari berdasarkan username atau email
+        $customer = $customerModel->where('username', $usernameOrEmail)
+            ->orWhere('email', $usernameOrEmail)
+            ->first();
+
+        if ($customer) {
+            // Jika data ditemukan, arahkan ke halaman reset password
+            return redirect()->to('/reset-password/' . $customer['id_customer']);
+        }
+
+        // Jika data tidak ditemukan
+        return view('forgot_password_step1', ['error' => 'Username atau Email tidak ditemukan']);
+    }
+
+    public function resetPassword($id_customer)
+    {
+        $customerModel = new CustomerModel();
+        $customer = $customerModel->find($id_customer);
+
+        if (!$customer) {
+            return redirect()->to('/forgot-password')->with('error', 'Akun tidak ditemukan');
+        }
+
+        return view('auth/ResetPassword', ['id_customer' => $id_customer]);
+    }
+
+    public function updatePassword()
+    {
+        $input = $this->request->getPost();
+        $validation = \Config\Services::validation();
+
+        // Validasi password dan konfirmasi password
+        if (!$this->validate([
+            'password' => 'required|min_length[6]',
+            'confirm_password' => 'required|matches[password]',
+        ])) {
+            return view('reset_password', ['validation' => $this->validator, 'id_customer' => $input['id_customer']]);
+        }
+
+        $customerModel = new CustomerModel();
+        $data = [
+            'password' => password_hash($input['password'], PASSWORD_DEFAULT), // Enkripsi password
+            'updated_at' => Time::now(),
+        ];
+
+        // Coba update password
+        if ($customerModel->update($input['id_customer'], $data)) {
+            return redirect()->to('/login')->with('message', 'Password berhasil diperbarui');
+        } else {
+            return redirect()->to('/reset-password/' . $input['id_customer'])->with('error', 'Terjadi kesalahan saat memperbarui password');
+        }
     }
 }

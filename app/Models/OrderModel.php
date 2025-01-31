@@ -6,7 +6,7 @@ use CodeIgniter\Model;
 
 class OrderModel extends Model
 {
-    protected $table = 'orders'; // Tabel orders
+    protected $table = 'orders';
     protected $primaryKey = 'id_order';
     protected $allowedFields = ['id_order', 'id_user', 'order_date', 'status', 'total_amount'];
     protected $useTimestamps = true;

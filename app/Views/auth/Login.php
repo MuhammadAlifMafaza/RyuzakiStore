@@ -12,7 +12,6 @@
 </head>
 
 <body class="bg-gradient-primary">
-
     <div class="container">
         <div class="row justify-content-center">
             <div class="col-lg-5">
@@ -25,16 +24,23 @@
                                         <h1 class="h4 text-gray-900 mb-4">Selamat Datang</h1>
                                     </div>
 
-                                    <!-- Menampilkan flash message -->
-                                    <?php if (session()->getFlashdata('msg')): ?>
-                                        <div class="alert alert-danger" role="alert">
-                                            <?= session()->getFlashdata('msg') ?>
+                                    <?php if (session()->getFlashdata('message')): ?>
+                                        <div class="alert alert-success">
+                                            <?= session()->getFlashdata('message'); ?>
                                         </div>
                                     <?php endif; ?>
 
-                                    <?php if (session()->getFlashdata('message')): ?>
-                                        <div class="alert alert-success" role="alert">
-                                            <?= session()->getFlashdata('message') ?>
+                                    <!-- Check for validation errors -->
+                                    <?php if (isset($validation)): ?>
+                                        <div class="alert alert-danger">
+                                            <?= $validation->listErrors(); ?>
+                                        </div>
+                                    <?php endif; ?>
+
+                                    <!-- Check for error message -->
+                                    <?php if (isset($error)): ?>
+                                        <div class="alert alert-danger">
+                                            <?= $error; ?>
                                         </div>
                                     <?php endif; ?>
 

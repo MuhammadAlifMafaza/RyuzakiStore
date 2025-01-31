@@ -6,11 +6,6 @@ use CodeIgniter\Controller;
 
 class AdminController extends Controller
 {
-     public function index()
-    {
-        return view('admin/index'); // Halaman utama admin
-    }
-
     public function dashboard()
     {
         return view('admin/dashboard'); // Dashboard admin
