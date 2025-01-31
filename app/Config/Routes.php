@@ -15,7 +15,6 @@ $routes->get('logout', 'AuthController::logout');
 $routes->get('register', 'AuthController::register');
 $routes->post('process-register', 'AuthController::processRegister'); // for POST registration
 
-// Route for Forgot Password Step 1
 $routes->get('forgot-password', 'AuthController::forgotPasswordStep1');
 $routes->post('verify-user', 'AuthController::verifyUser');  // For POST request
 
