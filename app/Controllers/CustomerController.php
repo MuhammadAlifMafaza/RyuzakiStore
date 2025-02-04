@@ -41,7 +41,7 @@ class CustomerController extends Controller
             'customerDetails' => $customerDetails,
         ];
 
-        return view('customer/profile', $data);
+        return view('home/profile', $data);
     }
 
     public function updateProfile()
@@ -69,9 +69,9 @@ class CustomerController extends Controller
         $updateStatus = $this->CustomerModel->updateUserDetails($customerId, $userData, $customerDetailsData);
 
         if ($updateStatus) {
-            return redirect()->to('/customer/profile')->with('success', 'Profile updated successfully!');
+            return redirect()->to('/home/profile')->with('success', 'Profile updated successfully!');
         } else {
-            return redirect()->to('/customer/profile')->with('error', 'Failed to update profile!');
+            return redirect()->to('/home/profile')->with('error', 'Failed to update profile!');
         }
     }
 }

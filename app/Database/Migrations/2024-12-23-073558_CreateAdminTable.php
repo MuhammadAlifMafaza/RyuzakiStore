@@ -13,6 +13,7 @@ class CreateAdminDetailsTable extends Migration
             'username'     => ['type' => 'VARCHAR', 'constraint' => 100, 'null' => false, 'unique' => true],
             'password'     => ['type' => 'VARCHAR', 'constraint' => 255, 'null' => false],
             'full_name'    => ['type' => 'VARCHAR', 'constraint' => 255, 'null' => true],
+            'img_profile'  => ['type' => 'VARCHAR', 'constraint' => 255, 'null' => true],
             'email'        => ['type' => 'VARCHAR', 'constraint' => 100, 'null' => false, 'unique' => true],
             'phone_number' => ['type' => 'VARCHAR', 'constraint' => 15, 'null' => true, 'unique' => true,],
             'address'      => ['type' => 'TEXT', 'null' => true],

@@ -10,10 +10,11 @@ class CreateOwnerTable extends Migration
     {
         // Membuat tabel owner_details
         $this->forge->addField([
-            'id_owner'       => ['type' => 'VARCHAR', 'constraint' => '12', 'null' => false,],
+            'id_owner'      => ['type' => 'VARCHAR', 'constraint' => '12', 'null' => false,],
             'username'      => ['type' => 'VARCHAR', 'constraint' => 100, 'null' => false, 'unique' => true],
             'password'      => ['type' => 'VARCHAR', 'constraint' => 255, 'null' => false],
             'full_name'     => ['type' => 'VARCHAR', 'constraint' => '255', 'null' => true,],
+            'img_profile'   => ['type' => 'VARCHAR', 'constraint' => 255, 'null' => true],
             'email'         => ['type' => 'VARCHAR', 'constraint' => 100, 'null' => false, 'unique' => true],
             'phone_number'  => ['type' => 'VARCHAR', 'constraint' => '15', 'null' => true, 'unique' => true,],
             'store_name'    => ['type' => 'VARCHAR', 'constraint' => '255', 'null' => true,],

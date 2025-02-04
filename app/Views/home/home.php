@@ -93,7 +93,6 @@
         <?php
         $products = (new \App\Models\ProductModel())->findAll(); // Ambil semua data produk
         ?>
-
         <!-- Product Cards -->
         <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-4">
             <?php foreach ($products as $product): ?>

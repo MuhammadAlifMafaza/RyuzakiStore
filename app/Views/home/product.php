@@ -1,4 +1,5 @@
-<?= $this->include('customer/layout/header') ?>
+<!-- tampil product -->
+<?= $this->include('home/layout/header') ?>
 <div class="container my-5">
     <div class="row product-container mx-auto">
         <div class="col-md-6 product-image">
@@ -27,4 +28,4 @@
         </div>
     </div>
 </div>
-<?= $this->include('customer/layout/footer') ?>
+<?= $this->include('home/layout/footer') ?>

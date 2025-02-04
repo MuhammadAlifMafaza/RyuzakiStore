@@ -14,6 +14,19 @@ class ProductController extends Controller
         $this->productModel = new ProductModel();
     }
 
+    // menampilkan data product di halaman pelanggan
+    public function detail($id) {
+        $productModel = new ProductModel();
+        $product = $productModel->find($id);
+
+        if (!$product) {
+            throw \CodeIgniter\Exceptions\PageNotFoundException::forPageNotFound();
+        }
+
+        return view('customer/product_detail', ['product' => $product]);
+    }
+
+    // mengelola data product
     public function index()
     {
         $data['products'] = $this->productModel->findAll();

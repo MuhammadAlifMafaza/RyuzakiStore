@@ -9,12 +9,12 @@ class CustomerModel extends Model
     protected $table = 'customer';
     protected $primaryKey = 'id_customer';
     protected $allowedFields = [
-        'username','password','email','full_name',
+        'username','password','full_name', 'email', 'img_profile',
         'phone_number','address','membership_level',
         'total_spent','created_at','updated_at'
     ];
 
-    protected $useTimestamps = true; // Enable timestamps for created_at and updated_at
+    protected $useTimestamps = true;
    
     // Method to fetch customer details (optional, if you need it)
     public function getCustomerDetails($id_customer)

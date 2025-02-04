@@ -7,7 +7,8 @@ use CodeIgniter\Router\RouteCollection;
  */
 
 $routes->get('/', to: 'CustomerController::index');
-$routes->get('/products', 'CustomerController::products');
+$routes->get('/products/', 'CustomerController::products');
+$routes->get('/profile/', 'CustomerController::profile');
 
 // Rute untuk AuthAdminController
 $routes->get('adminAuth/login', 'Admin\AuthAdminController::login'); // Halaman login
@@ -16,11 +17,6 @@ $routes->get('adminAuth/register', 'Admin\AuthAdminController::register'); // Ha
 $routes->post('adminAuth/processRegister', 'Admin\AuthAdminController::processRegister'); // Proses registrasi
 $routes->get('adminAuth/logout', 'Admin\AuthAdminController::logout'); // Logout
 
-$routes->get('OwnerAuth/login', 'Owner\AuthOwnerController::login'); // Halaman login
-$routes->post('OwnerAuth/processLogin', 'Owner\AuthOwnerController::processLogin'); // Proses login
-$routes->get('OwnerAuth/register', 'Owner\AuthOwnerController::register'); // Halaman registrasi
-$routes->post('OwnerAuth/processRegister', 'Owner\AuthOwnerController::processRegister'); // Proses registrasi
-$routes->get('OwnerAuth/logout', 'Owner\AuthOwnerController::logout'); // Logout
 
 // Kelompokkan rute untuk customer
 $routes->group('', function ($routes) {
