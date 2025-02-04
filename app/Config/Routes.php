@@ -6,39 +6,52 @@ use CodeIgniter\Router\RouteCollection;
  * @var RouteCollection $routes
  */
 
-$routes->get('/', 'CustomerController::index');
+$routes->get('/', to: 'CustomerController::index');
+$routes->get('/products', 'CustomerController::products');
 
+// Rute untuk AuthAdminController
+$routes->get('adminAuth/login', 'Admin\AuthAdminController::login'); // Halaman login
+$routes->post('adminAuth/processLogin', 'Admin\AuthAdminController::processLogin'); // Proses login
+$routes->get('adminAuth/register', 'Admin\AuthAdminController::register'); // Halaman registrasi
+$routes->post('adminAuth/processRegister', 'Admin\AuthAdminController::processRegister'); // Proses registrasi
+$routes->get('adminAuth/logout', 'Admin\AuthAdminController::logout'); // Logout
 
-$routes->get('login', 'AuthController::login');
-$routes->post('processLogin', 'AuthController::processLogin'); // for POST login
-$routes->get('logout', 'AuthController::logout');
-$routes->get('register', 'AuthController::register');
-$routes->post('processRegister', 'AuthController::processRegister'); // for POST registration
-
-$routes->get('forgot-password', 'AuthController::forgotPasswordStep1');
-$routes->post('verify-user', 'AuthController::verifyUser');  // For POST request
-
-// Route for Reset Password page (with customer ID)
-$routes->get('reset-password/(:any)', 'AuthController::resetPassword/$1');
-$routes->post('update-password', 'AuthController::updatePassword');  // For POST request
+$routes->get('OwnerAuth/login', 'Owner\AuthOwnerController::login'); // Halaman login
+$routes->post('OwnerAuth/processLogin', 'Owner\AuthOwnerController::processLogin'); // Proses login
+$routes->get('OwnerAuth/register', 'Owner\AuthOwnerController::register'); // Halaman registrasi
+$routes->post('OwnerAuth/processRegister', 'Owner\AuthOwnerController::processRegister'); // Proses registrasi
+$routes->get('OwnerAuth/logout', 'Owner\AuthOwnerController::logout'); // Logout
 
 // Kelompokkan rute untuk customer
-$routes->group('', ['filter' => 'authfilter'], function ($routes) {
-    $routes->get('/', 'CustomerController::index');
+$routes->group('', function ($routes) {
     $routes->get('/', 'CustomerController::index');
     $routes->get('checkout', 'CustomerController::checkout');
 });
 
 // rute untuk admin
-$routes->group('admin', ['filter' => 'authfilter'], function ($routes) {
-    // $routes->get('/', 'AuthController::login'); // Halaman login admin (dikecualikan dari filter)
-    $routes->get('/', 'AdminController::dashboard');
+$routes->group('admin', function ($routes) {
+    $routes->get('dashboard', 'AdminController::dashboard');
+
+    // Settings
     $routes->get('settings', 'AdminController::settings');
 });
 
+
 // rute untuk owner
-$routes->group('owner', ['filter' => 'authfilter'], function ($routes) {
-    // $routes->get('/', 'AuthController::login'); // Halaman login owner (dikecualikan dari filter)
-    $routes->get('/', 'OwnerController::dashboard');
-    $routes->get('reports', 'OwnerController::reports');
-});
+// $routes->get('/', 'AuthController::login'); // Halaman login owner (dikecualikan dari filter)
+$routes->get('owner/dashboard', 'OwnerController::dashboard');
+
+$routes->get('reports', 'OwnerController::reports');
+
+
+// Produk admin dan owner
+$routes->get('/product-list', 'ProductController::index');
+$routes->get('/create-product', 'ProductController::create');
+$routes->post('/store-product', 'ProductController::store');
+
+$routes->get('/update-product/(:any)', 'ProductController::edit/$1');
+$routes->post('/update-product/(:any)', 'ProductController::update/$1');
+
+$routes->get('/detail-product/(:any)', 'ProductController::show/$1');
+
+$routes->delete('/delete-product/(:any)', 'ProductController::delete/$1');

@@ -90,36 +90,45 @@
             <button class="search-button">Go</button>
         </div>
 
+        <?php
+        $products = (new \App\Models\ProductModel())->findAll(); // Ambil semua data produk
+        ?>
+
         <!-- Product Cards -->
         <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-4">
-            <div class="col">
-                <a href="path_to_product_details_page" class="card shadow-sm text-decoration-none">
-                    <!-- Carousel untuk Gambar Produk -->
-                    <div id="productCarousel1" class="carousel slide product-carousel" data-bs-ride="carousel">
-                        <div class="carousel-inner">
-                            <div class="carousel-item active">
-                                <img src="<?= base_url("\assets\img\Celana-Panjang-Regular-Fit.jpg") ?>" class="d-block w-100 product-image" alt="Product Image 1">
-                            </div>
-                            <div class="carousel-item">
-                                <img src="<?= base_url("\assets\img\Celana-Panjang-Regular-Fit.jpg") ?>" class="d-block w-100 product-image" alt="Product Image 1">
-                            </div>
-                            <div class="carousel-item">
-                                <img src="<?= base_url("\assets\img\Celana-Panjang-Regular-Fit.jpg") ?>" class="d-block w-100 product-image" alt="Product Image 1">
-                            </div>
-                            <div class="carousel-item">
-                                <img src="<?= base_url("\assets\img\Celana-Panjang-Regular-Fit.jpg") ?>" class="d-block w-100 product-image" alt="Product Image 1">
+            <?php foreach ($products as $product): ?>
+                <div class="col">
+                    <a href="<?= base_url('/products/' . $product['id_product']) ?>" class="card shadow-sm text-decoration-none">
+                        <!-- Carousel untuk Gambar Produk -->
+                        <div id="productCarousel<?= esc($product['id_product']) ?>" class="carousel slide product-carousel" data-bs-ride="carousel">
+                            <div class="carousel-inner">
+                                <?php
+                                $images = explode(',', $product['image']); // Jika gambar disimpan dalam format string dengan koma
+                                foreach ($images as $index => $image):
+                                    $imagePath = trim($image);
+                                    if (!str_starts_with($imagePath, 'uploads/')) {
+                                        $imagePath = 'uploads/img/products/' . $imagePath;
+                                    }
+                                ?>
+                                    <div class="carousel-item <?= $index === 0 ? 'active' : '' ?>">
+                                        <img src="<?= base_url($imagePath) ?>" class="d-block w-100 product-image" alt="Product Image">
+                                    </div>
+                                <?php endforeach; ?>
                             </div>
                         </div>
-                    </div>
-                    <!-- Detail Produk -->
-                    <div class="card-body text-center">
-                        <p class="product-category">Atasan Wanita</p>
-                        <h5 class="product-name">Peplum Organza Pantone</h5>
-                        <p class="product-price">Rp 150.000</p>
-                    </div>
-                </a>
-            </div>
+                        <!-- Detail Produk -->
+                        <div class="card-body text-center">
+                            <p class="product-category text-muted small mb-1"><?= esc($product['category']) ?></p>
+                            <h5 class="product-name mb-2 font-weight-bold text-dark">
+                                <?= esc($product['product_name']) ?>
+                            </h5>
+                            <p class="product-price text-primary fw-bold">Rp <?= number_format($product['price'], 0, ',', '.') ?></p>
+                        </div>
+                    </a>
+                </div>
+            <?php endforeach; ?>
         </div>
+
 
         <!-- Footer -->
         <footer>

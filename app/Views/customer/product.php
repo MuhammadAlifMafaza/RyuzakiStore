@@ -8,12 +8,7 @@
             <h1>Peplum Silky Gold</h1>
             <p><strong>Kategori:</strong> <span class="category">Atasan Wanita</span></p>
             <p><strong>Tags:</strong> <span class="tag casual">Casual</span> <span class="tag pakaian-wanita">Pakaian Wanita</span></p>
-            <p><strong>Ukuran:</strong></p>
-            <div class="size-buttons">
-                <button class="btn btn-outline-primary">S</button>
-                <button class="btn btn-outline-primary">M</button>
-                <button class="btn btn-outline-primary">L</button>
-            </div>
+
             <p class="price">Rp 200.000</p>
             <p class="description">Pakaian ini dibuat dengan material Brokat dan Organza</p>
             <p><strong>Stok tersisa:</strong> 100</p>

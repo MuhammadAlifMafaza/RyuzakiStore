@@ -1,3 +1,4 @@
+<!-- views/auth/register -->
 <!DOCTYPE html>
 <html lang="en">
 
@@ -22,50 +23,55 @@
                             <div class="col-lg-12">
                                 <div class="p-5">
                                     <h1 class="h4 text-gray-900 mb-4">Membuat Akun Baru!</h1>
-                                    <!-- Pesan Singkat / Flash Messages -->
-                                    <?php if (session()->getFlashdata('success')): ?>
-                                        <div class="alert alert-success" role="alert">
-                                            <?= session()->getFlashdata('success') ?>
-                                        </div>
-                                    <?php endif; ?>
-                                    <?php if (session()->getFlashdata('error')): ?>
-                                        <div class="alert alert-danger" role="alert">
-                                            <?= session()->getFlashdata('error') ?>
-                                        </div>
-                                    <?php endif; ?>
-                                    <!-- Form Registrasi -->
-                                    <form class="user" method="POST" action="<?= site_url('register/process') ?>">
+                                    <form class="user" method="POST" action="<?= site_url('adminAuth/processRegister') ?>">
                                         <?= csrf_field() ?>
+
+                                        <!-- Role -->
+                                        <div class="form-group">
+                                            <select class="form-control form-control-user" name="role" required>
+                                                <option value="admin" <?= old('role') === 'admin' ? 'selected' : '' ?>>Admin</option>
+                                                <option value="owner" <?= old('role') === 'owner' ? 'selected' : '' ?>>Owner</option>
+                                            </select>
+                                            <?php if (isset($validation) && $validation->getError('role')): ?>
+                                                <div class="text-danger small"><?= $validation->getError('role') ?></div>
+                                            <?php endif; ?>
+                                        </div>
+
                                         <!-- Username -->
                                         <div class="form-group">
                                             <input type="text" class="form-control form-control-user" id="username" name="username" placeholder="Username" value="<?= old('username') ?>" required>
-                                            <?php if (isset($errors['username'])): ?>
-                                                <div class="text-danger small"><?= $errors['username'] ?></div>
+                                            <?php if (isset($validation) && $validation->getError('username')): ?>
+                                                <div class="text-danger small"><?= $validation->getError('username') ?></div>
                                             <?php endif; ?>
                                         </div>
+
                                         <!-- Email -->
                                         <div class="form-group">
                                             <input type="email" class="form-control form-control-user" id="email" name="email" placeholder="Email Address" value="<?= old('email') ?>" required>
-                                            <?php if (isset($errors['email'])): ?>
-                                                <div class="text-danger small"><?= $errors['email'] ?></div>
+                                            <?php if (isset($validation) && $validation->getError('email')): ?>
+                                                <div class="text-danger small"><?= $validation->getError('email') ?></div>
                                             <?php endif; ?>
                                         </div>
+
                                         <!-- Password -->
                                         <div class="form-group">
                                             <input type="password" class="form-control form-control-user" id="password" name="password" placeholder="Password" required>
-                                            <?php if (isset($errors['password'])): ?>
-                                                <div class="text-danger small"><?= $errors['password'] ?></div>
+                                            <?php if (isset($validation) && $validation->getError('password')): ?>
+                                                <div class="text-danger small"><?= $validation->getError('password') ?></div>
                                             <?php endif; ?>
                                         </div>
+
                                         <!-- Repeat Password -->
                                         <div class="form-group">
                                             <input type="password" class="form-control form-control-user" id="repeat_password" name="repeat_password" placeholder="Repeat Password" required>
-                                            <?php if (isset($errors['repeat_password'])): ?>
-                                                <div class="text-danger small"><?= $errors['repeat_password'] ?></div>
+                                            <?php if (isset($validation) && $validation->getError('repeat_password')): ?>
+                                                <div class="text-danger small"><?= $validation->getError('repeat_password') ?></div>
                                             <?php endif; ?>
                                         </div>
+
                                         <button type="submit" class="btn btn-primary btn-user btn-block">Register Akun</button>
                                     </form>
+
                                     <hr>
                                     <div class="text-center">
                                         <a class="small" href="<?= site_url('forgot-password'); ?>">Lupa Password?</a>

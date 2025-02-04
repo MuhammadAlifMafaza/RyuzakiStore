@@ -6,20 +6,20 @@ use CodeIgniter\Model;
 
 class ProductModel extends Model
 {
-    protected $table = 'products'; // Nama tabel produk
-    protected $primaryKey = 'id_product'; // Primary key untuk tabel produk
+    protected $table = 'products'; // Table name
+    protected $primaryKey = 'id_product'; // Primary key of the table
     protected $allowedFields = [
-        'id_product', 'product_name', 'category','tags', 'description',
+        'id_product', 'product_name', 'category', 'tags', 'description',
         'image', 'price', 'stock_quantity', 'created_at', 'updated_at',
     ];
 
-    protected $useTimestamps = true; // Mengaktifkan penggunaan timestamps untuk created_at dan updated_at
+    protected $useTimestamps = true; // Enable timestamps for created_at and updated_at
 
-    // Menambahkan validasi data produk
+    // Validation rules for product data
     protected $validationRules = [
         'product_name' => 'required|min_length[3]|max_length[255]',
         'category' => 'in_list[Atasan Pria,Atasan Wanita,Bawahan Pria,Bawahan Wanita]', // Enum validation
-        'tags' => 'permit_empty', // Set type can be empty
+        'tags' => 'permit_empty', // Can be empty
         'price' => 'required|decimal',
         'stock_quantity' => 'required|integer',
     ];
@@ -43,31 +43,31 @@ class ProductModel extends Model
         ],
     ];
 
-    // Menambahkan fungsi untuk mengambil semua produk
+    // Function to fetch all products
     public function getAllProducts()
     {
         return $this->findAll();
     }
 
-    // Menambahkan fungsi untuk mengambil produk berdasarkan ID
+    // Function to fetch product by ID
     public function getProductById($id_product)
     {
         return $this->find($id_product);
     }
 
-    // Menambahkan fungsi untuk menambahkan produk baru
+    // Function to insert a new product
     public function createProduct($data)
     {
         return $this->insert($data);
     }
 
-    // Menambahkan fungsi untuk memperbarui produk berdasarkan ID
+    // Function to update product by ID
     public function updateProduct($id_product, $data)
     {
         return $this->update($id_product, $data);
     }
 
-    // Menambahkan fungsi untuk menghapus produk berdasarkan ID
+    // Function to delete product by ID
     public function deleteProduct($id_product)
     {
         return $this->delete($id_product);

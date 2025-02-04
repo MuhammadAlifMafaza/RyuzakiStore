@@ -1,4 +1,4 @@
-<!-- app\Views\auth\Login.php -->
+<!-- views/auth/login -->
 <!DOCTYPE html>
 <html lang="en">
 
@@ -21,44 +21,37 @@
                             <div class="col-lg-12">
                                 <div class="p-5">
                                     <div class="text-center">
-                                        <h1 class="h4 text-gray-900 mb-4">Selamat Datang</h1>
+                                        <h1 class="h4 text-gray-900 mb-4">Selamat Datang!</h1>
                                     </div>
-
-                                    <?php if (session()->getFlashdata('message')): ?>
-                                        <div class="alert alert-success">
-                                            <?= session()->getFlashdata('message'); ?>
-                                        </div>
-                                    <?php endif; ?>
-
-                                    <!-- Check for validation errors -->
-                                    <?php if (isset($validation)): ?>
+                                    <!-- Menampilkan error jika ada -->
+                                    <?php if (session()->getFlashdata('error')) : ?>
                                         <div class="alert alert-danger">
-                                            <?= $validation->listErrors(); ?>
+                                            <?= session()->getFlashdata('error') ?>
                                         </div>
                                     <?php endif; ?>
 
-                                    <!-- Check for error message -->
-                                    <?php if (isset($error)): ?>
-                                        <div class="alert alert-danger">
-                                            <?= $error; ?>
-                                        </div>
-                                    <?php endif; ?>
-
-                                    <form class="user" action="/auth/loginProcess" method="post">
+                                    <!-- views/auth/login -->
+                                    <form class="user" action="<?= site_url('adminAuth/processLogin') ?>" method="post">
                                         <div class="form-group">
-                                            <input type="text" class="form-control form-control-user" id="identifier" name="identifier" placeholder="Masukkan Email atau Username Anda..." required>
+                                            <input type="text" class="form-control form-control-user" id="login" name="login" placeholder="Masukkan Email atau Username Anda..." required>
                                         </div>
                                         <div class="form-group">
                                             <input type="password" class="form-control form-control-user" id="password" name="password" placeholder="Password" required>
+                                        </div>
+                                        <div class="form-group">
+                                            <select class="form-control form-control-user" name="role" required>
+                                                <option value="admin" <?= old('role') === 'admin' ? 'selected' : '' ?>>Admin</option>
+                                                <option value="owner" <?= old('role') === 'owner' ? 'selected' : '' ?>>Owner</option>
+                                            </select>
                                         </div>
                                         <button type="submit" class="btn btn-primary btn-user btn-block">Login</button>
                                     </form>
                                     <hr>
                                     <div class="text-center">
-                                        <a class="small" href="#">Lupa Password?</a>
+                                        <a class="small" href="<?= site_url('forgot-password'); ?>">Lupa Password?</a>
                                     </div>
                                     <div class="text-center">
-                                        <a class="small" href="/register">Buat Akun Baru!</a>
+                                        <a class="small" href="<?= site_url('adminAuth/register'); ?>">Buat Akun Baru!</a>
                                     </div>
                                 </div>
                             </div>

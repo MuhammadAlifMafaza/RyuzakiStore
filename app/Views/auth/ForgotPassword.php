@@ -1,4 +1,3 @@
-<!-- forgot_password_step1.php -->
 <!DOCTYPE html>
 <html lang="en">
 
@@ -6,42 +5,65 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Forgot Password</title>
-    <!-- Include SB Admin 2 CSS -->
-    <!-- Add SB Admin 2 CSS -->
-    <link href="<?= base_url('/sb-admin2/vendor/bootstrap/css/bootstrap.min.css') ?>" rel="stylesheet">
-    <link href="<?= base_url('/sb-admin2/css/sb-admin-2.min.css') ?>" rel="stylesheet">
-    <link href="<?= base_url('/sb-admin2/vendor/fontawesome-free/css/all.min.css') ?>" rel="stylesheet">
-
+    <!-- SB Admin 2 CSS from CDN -->
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://startbootstrap.github.io/startbootstrap-sb-admin-2/css/sb-admin-2.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css" rel="stylesheet">
 </head>
 
 <body class="bg-gradient-primary">
     <div class="container">
-        <?php if (isset($validation)): ?>
-            <div class="alert alert-danger">
-                <?= $validation->listErrors(); ?>
-            </div>
-        <?php endif; ?>
 
-        <?php if (isset($error)): ?>
-            <div class="alert alert-danger">
-                <?= $error; ?>
-            </div>
-        <?php endif; ?>
+        <!-- Outer Row -->
+        <div class="row justify-content-center">
 
-        <form action="/verify-user" method="post">
-            <div class="form-group">
-                <label for="username_or_email">Username or Email</label>
-                <input type="text" class="form-control" id="username_or_email" name="username_or_email" required>
+            <div class="col-xl-10 col-lg-12 col-md-9">
+
+                <div class="card o-hidden border-0 shadow-lg my-5">
+                    <div class="card-body p-0">
+                        <!-- Nested Row within Card Body -->
+                        <div class="row">
+                            <div class="col-lg-6 d-none d-lg-block bg-password-image"></div>
+                            <div class="col-lg-6">
+                                <div class="p-5">
+                                    <div class="text-center">
+                                        <h1 class="h4 text-gray-900 mb-2">Lupa Kata Sandi Anda?</h1>
+                                        <p class="mb-4">Kami mengerti, banyak hal terjadi. Cukup masukkan alamat email Anda
+                                            di bawah dan kami akan mengirimkan Anda tautan untuk mengatur ulang kata sandi Anda!</p>
+                                    </div>
+                                    <form class="user">
+                                        <div class="form-group">
+                                            <input type="email" class="form-control form-control-user"
+                                                id="exampleInputEmail" aria-describedby="emailHelp"
+                                                placeholder="Enter Email Address...">
+                                        </div>
+                                        <a href="login.html" class="btn btn-primary btn-user btn-block">
+                                            Reset Password
+                                        </a>
+                                    </form>
+                                    <hr>
+                                    <div class="text-center">
+                                        <a class="small" href="/register">Buat Akun Baru!</a>
+                                    </div>
+                                    <div class="text-center">
+                                        <a class="small" href="<?= site_url('login'); ?>">Sudah Punya Akun? Login!</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
             </div>
-            <button type="submit" class="btn btn-primary">Submit</button>
-        </form>
+
+        </div>
+
     </div>
 
-    <!-- Add SB Admin 2 JS -->
-    <script src="<?= base_url('/sb-admin2/vendor/jquery/jquery.min.js') ?>"></script>
-    <script src="<?= base_url('/sb-admin2/vendor/bootstrap/js/bootstrap.bundle.min.js') ?>"></script>
-    <script src="<?= base_url('/sb-admin2/vendor/jquery-easing/jquery.easing.min.js') ?>"></script>
-    <script src="<?= base_url('/sb-admin2/js/sb-admin-2.min.js') ?>"></script>
+    <!-- SB Admin 2 JS from CDN -->
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.bundle.min.js"></script>
+    <script src="https://startbootstrap.github.io/startbootstrap-sb-admin-2/js/sb-admin-2.min.js"></script>
 </body>
 
 </html>
