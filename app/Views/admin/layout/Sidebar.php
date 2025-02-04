@@ -28,7 +28,7 @@
 
     <!-- Nav Item - Pages Collapse Menu -->
     <li class="nav-item">
-        <a class="nav-link collapsed" href="/product-list">
+        <a class="nav-link collapsed" href="<?= base_url("/admin/product-list") ?>">
             <i class="fas fa-fw fa-boxes"></i>
             <span>Products</span>
         </a>

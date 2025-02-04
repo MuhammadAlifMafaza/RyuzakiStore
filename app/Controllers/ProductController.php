@@ -15,7 +15,8 @@ class ProductController extends Controller
     }
 
     // menampilkan data product di halaman pelanggan
-    public function detail($id) {
+    public function detail($id)
+    {
         $productModel = new ProductModel();
         $product = $productModel->find($id);
 
@@ -23,23 +24,34 @@ class ProductController extends Controller
             throw \CodeIgniter\Exceptions\PageNotFoundException::forPageNotFound();
         }
 
-        return view('customer/product_detail', ['product' => $product]);
+        return view('home/product', ['product' => $product]);
     }
 
-    // mengelola data product
+    // Mengelola data produk admin
     public function index()
     {
         $data['products'] = $this->productModel->findAll();
-        return view('/products/index', $data);
+        return view('admin/products/index', $data);  // Path yang benar
     }
 
     public function create()
     {
-        return view('/products/create');
+        return view('admin/products/create');  // Path yang benar
     }
 
     public function store()
     {
+        $validationRules = [
+            'product_name' => 'required|min_length[3]|max_length[255]',
+            'category' => 'required',
+            'price' => 'required|numeric',
+            'stock_quantity' => 'required|integer',
+        ];
+
+        if (!$this->validate($validationRules)) {
+            return redirect()->back()->withInput()->with('error', 'Data tidak valid!');
+        }
+
         $file = $this->request->getFiles();
         $imagePaths = [];
 
@@ -71,7 +83,7 @@ class ProductController extends Controller
         ];
 
         if ($this->productModel->insert($data)) {
-            return redirect()->to('/product-list')->with('success', 'Product created successfully!');
+            return redirect()->to('/admin/product-list')->with('success', 'Product created successfully!');
         } else {
             return redirect()->back()->with('error', 'Failed to create product!');
         }
@@ -80,38 +92,80 @@ class ProductController extends Controller
     public function edit($id_product)
     {
         $product = $this->productModel->find($id_product);
-        return view('/products/update', ['product' => $product]);
+        return view('admin/products/update', ['product' => $product]);  // Path yang benar
     }
 
     public function update($id_product)
     {
-        $product = $this->productModel->find($id_product);
-        $file = $this->request->getFiles();
-        $imagePaths = explode(',', $product['image']); // Ambil gambar lama
+        // Validasi input selain gambar
+        $validationRules = [
+            'product_name'   => 'required|min_length[3]|max_length[255]',
+            'category'       => 'required',
+            'price'          => 'required|numeric',
+            'stock_quantity' => 'required|integer',
+        ];
 
+        if (!$this->validate($validationRules)) {
+            return redirect()->back()->withInput()->with('error', 'Data tidak valid!');
+        }
+
+        $product = $this->productModel->find($id_product);
+        $file    = $this->request->getFiles();
+
+        // Inisialisasi variabel untuk menyimpan path gambar yang akan digunakan
+        $updatedImagePaths = $product['image']; // default: gunakan data gambar yang sudah ada
+
+        // Cek apakah ada file gambar baru yang diunggah
         if (!empty($file['images'])) {
-            foreach ($file['images'] as $img) {
-                if ($img->isValid() && !$img->hasMoved()) {
-                    $newName = $img->getRandomName();
-                    $img->move(FCPATH . 'uploads/img/', $newName);
-                    $imagePaths[] = 'uploads/img/' . $newName;
+            // Kita asumsikan field "images" adalah array. Cek apakah file pertama ada dan tidak error.
+            // Kode Error 4 biasanya berarti "No file was uploaded"
+            if (isset($file['images'][0]) && $file['images'][0]->getError() !== 4) {
+                // Jika ada gambar baru, kita hapus gambar lama (opsional, sesuaikan kebutuhan)
+                $oldImages = explode(',', $product['image']);
+                foreach ($oldImages as $oldImage) {
+                    // Pastikan oldImage tidak kosong
+                    $oldImage = trim($oldImage);
+                    if (!empty($oldImage)) {
+                        $oldImagePath = FCPATH . $oldImage;
+                        // Pastikan file benar-benar ada dan merupakan file (bukan direktori)
+                        if (file_exists($oldImagePath) && is_file($oldImagePath)) {
+                            unlink($oldImagePath);
+                        }
+                    }
                 }
+
+                // Upload gambar baru
+                $newImagePaths = [];
+                foreach ($file['images'] as $img) {
+                    if ($img->isValid() && !$img->hasMoved()) {
+                        $newName    = $img->getRandomName();
+                        $uploadPath = FCPATH . 'uploads/img/products/'; // Pastikan path sudah sesuai
+                        if (!is_dir($uploadPath)) {
+                            mkdir($uploadPath, 0777, true);
+                        }
+                        $img->move($uploadPath, $newName);
+                        $newImagePaths[] = 'uploads/img/products/' . $newName;
+                    }
+                }
+                // Gabungkan path gambar baru menjadi string, misal dipisahkan dengan koma
+                $updatedImagePaths = implode(',', $newImagePaths);
             }
         }
 
         $data = [
-            'product_name' => $this->request->getPost('product_name'),
-            'category' => $this->request->getPost('category'),
-            'tags' => $this->request->getPost('tags'),
-            'description' => $this->request->getPost('description'),
-            'price' => $this->request->getPost('price'),
+            'product_name'   => $this->request->getPost('product_name'),
+            'category'       => $this->request->getPost('category'),
+            'tags'           => $this->request->getPost('tags'),
+            'description'    => $this->request->getPost('description'),
+            'price'          => $this->request->getPost('price'),
             'stock_quantity' => $this->request->getPost('stock_quantity'),
-            'image' => implode(',', $imagePaths), // Gabungkan gambar baru + lama
-            'updated_at' => date('Y-m-d H:i:s')
+            // Jika ada gambar baru, gunakan gambar baru; jika tidak, tetap gunakan gambar lama.
+            'image'          => $updatedImagePaths,
+            'updated_at'     => date('Y-m-d H:i:s')
         ];
 
         if ($this->productModel->update($id_product, $data)) {
-            return redirect()->to('/product-list')->with('success', 'Product updated successfully!');
+            return redirect()->to('/admin/product-list')->with('success', 'Product updated successfully!');
         } else {
             return redirect()->back()->with('error', 'Failed to update product!');
         }
@@ -119,23 +173,16 @@ class ProductController extends Controller
 
     public function delete($id_product)
     {
-        // Check if the form method is POST and if the hidden '_method' is set to 'DELETE'
-        if ($this->request->getMethod() === 'post' && $this->request->getPost('_method') === 'DELETE') {
-            if ($this->productModel->delete($id_product)) {
-                return redirect()->to('/product-list')->with('success', 'Product deleted successfully!');
-            } else {
-                return redirect()->back()->with('error', 'Failed to delete product!');
-            }
+        if ($this->productModel->delete($id_product)) {
+            return redirect()->to('/admin/product-list')->with('success', 'Product deleted successfully!');
+        } else {
+            return redirect()->back()->with('error', 'Failed to delete product!');
         }
-
-        // If method is not POST or '_method' is not DELETE
-        return redirect()->back()->with('error', 'Invalid request method!');
     }
-
 
     public function show($id_product)
     {
         $data['product'] = $this->productModel->find($id_product);
-        return view('/products/detail', $data);
+        return view('admin/products/detail', $data);  // Path yang benar
     }
 }

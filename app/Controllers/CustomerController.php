@@ -17,10 +17,10 @@ class CustomerController extends Controller
     }
 
     public function index(){
-        return view('\customer\home');
+        return view('\home\home');
     }
     public function products(){
-        return view('\customer\product');
+        return view('\home\product');
     }
     public function profile()
     {

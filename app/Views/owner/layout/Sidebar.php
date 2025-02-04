@@ -28,7 +28,7 @@
 
     <!-- Nav Item - Pages Collapse Menu -->
     <li class="nav-item">
-        <a class="nav-link collapsed" href="<?= base_url('/product-list') ?>">
+        <a class="nav-link collapsed" href="<?= base_url('/owner/product-list') ?>">
             <i class="fas fa-fw fa-boxes"></i>
             <span>Products</span>
         </a>
@@ -63,8 +63,8 @@
     <!-- Nav Item - Charts -->
     <li class="nav-item">
         <a class="nav-link" href="<?= base_url('')?>">
-            <i class="fas fa-fw fa-list-alt"></i>
-            <span>Orders</span></a>
+            <i class="fas fa-fw fa-dollar-sign"></i>
+            <span>Transaction</span></a>
     </li>
 
     <!-- Nav Item - Pages Collapse Menu -->

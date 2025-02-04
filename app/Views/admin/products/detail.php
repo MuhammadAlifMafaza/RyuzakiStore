@@ -39,8 +39,8 @@
                         <p><strong>Price:</strong> Rp <?= number_format($product['price'], 2) ?></p>
                         <p><strong>Stock Quantity:</strong> <?= $product['stock_quantity'] ?></p>
                         <div class="btn-group mt-3" role="group" aria-label="Product Action Buttons">
-                            <a href="/product-list" class="btn btn-primary btn-sm me-2">Back to List</a>
-                            <a href="/update-product/<?= $product['id_product'] ?>" class="btn btn-warning btn-sm">Edit</a>
+                            <a href="/admin/product-list/" class="btn btn-primary btn-sm me-2">Back to List</a>
+                            <a href="/admin/update-product/<?= $product['id_product'] ?>" class="btn btn-warning btn-sm">Edit</a>
                         </div>
                     </div>
                 </div>

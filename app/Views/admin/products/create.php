@@ -5,7 +5,7 @@
         <?= $this->include('admin/layout/topbar') ?>
         <div class="container-fluid">
             <h1 class="h3 mb-2 text-gray-800">Add New Product</h1>
-            <form action="/store-product" method="post" enctype="multipart/form-data">
+            <form action="<?= base_url('/admin/store-product')?>" method="post" enctype="multipart/form-data">
                 <div class="form-group">
                     <label for="product_name">Product Name</label>
                     <input type="text" class="form-control" name="product_name" required>

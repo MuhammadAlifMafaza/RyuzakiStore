@@ -7,7 +7,7 @@ use CodeIgniter\Router\RouteCollection;
  */
 
 $routes->get('/', to: 'CustomerController::index');
-$routes->get('/products/', 'CustomerController::products');
+$routes->get('/products/', 'ProductController::detail');
 $routes->get('/profile/', 'CustomerController::profile');
 
 // Rute untuk AuthAdminController
@@ -24,30 +24,41 @@ $routes->group('', function ($routes) {
     $routes->get('checkout', 'CustomerController::checkout');
 });
 
-// rute untuk admin
+// Rute untuk admin
 $routes->group('admin', function ($routes) {
-    $routes->get('dashboard', 'AdminController::dashboard');
+    $routes->get('/', 'AdminController::dashboard');
 
+    $routes->get('product-list', 'ProductController::index');
+    $routes->get('create-product', 'ProductController::create');
+    $routes->post('store-product', 'ProductController::store');
+
+    $routes->get('update-product/(:any)', 'ProductController::edit/$1');
+    $routes->post('update-product/(:any)', 'ProductController::update/$1');
+
+    $routes->get('detail-product/(:any)', 'ProductController::show/$1');
+
+    $routes->post('admin/delete-product/(:num)', 'ProductController::delete/$1');
     // Settings
     $routes->get('settings', 'AdminController::settings');
 });
 
 
-// rute untuk owner
-// $routes->get('/', 'AuthController::login'); // Halaman login owner (dikecualikan dari filter)
-$routes->get('owner/dashboard', 'OwnerController::dashboard');
+$routes->group('owner', function ($routes) {
+    $routes->get('/', 'OwnerController::dashboard');
 
-$routes->get('reports', 'OwnerController::reports');
+    $routes->get('/product-list', 'ProductController::index');
+    $routes->get('/create-product', 'ProductController::create');
+    $routes->post('/store-product', 'ProductController::store');
 
+    $routes->get('/update-product/(:any)', 'ProductController::edit/$1');
+    $routes->post('/update-product/(:any)', 'ProductController::update/$1');
 
-// Produk admin dan owner
-$routes->get('/product-list', 'ProductController::index');
-$routes->get('/create-product', 'ProductController::create');
-$routes->post('/store-product', 'ProductController::store');
+    $routes->get('/detail-product/(:any)', 'ProductController::show/$1');
 
-$routes->get('/update-product/(:any)', 'ProductController::edit/$1');
-$routes->post('/update-product/(:any)', 'ProductController::update/$1');
+    $routes->delete('/delete-product/(:any)', 'ProductController::delete/$1');
 
-$routes->get('/detail-product/(:any)', 'ProductController::show/$1');
-
-$routes->delete('/delete-product/(:any)', 'ProductController::delete/$1');
+    // report
+    $routes->get('reports', 'OwnerController::reports');
+    // Settings
+    $routes->get('settings', 'OwnerController::settings');
+});

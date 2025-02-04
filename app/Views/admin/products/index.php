@@ -12,7 +12,7 @@
                 <a target="_blank" href="#">official DataTables documentation</a>.
             </p>
             <div class="d-sm-flex align-items-center justify-content-between mb-4">
-                <a href="/create-product" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm">
+                <a href="<?= base_url('/admin/create-product') ?>" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm">
                     <i class="fas fa-plus fa-sm text-white-50"></i> Add Product</a>
             </div>
             <!-- DataTales Example -->
@@ -45,12 +45,16 @@
                                         <td>Rp <?= number_format($product['price'], 2) ?></td>
                                         <td><?= $product['stock_quantity'] ?></td>
                                         <td>
-                                            <a href="/detail-product/<?= $product['id_product'] ?>" class="btn btn-info btn-sm">Detail</a>
-                                            <a href="/update-product/<?= $product['id_product'] ?>" class="btn btn-warning btn-sm">Edit</a>
-                                            <form action="/delete-product/<?= $product['id_product'] ?>" method="post" onsubmit="return confirm('Are you sure you want to delete this product?')">
-                                                <input type="hidden" name="_method" value="DELETE"> <!-- Hidden method field -->
-                                                <button type="submit" class="btn btn-danger btn-sm">Delete</button>
-                                            </form>
+                                            <a href="/admin/detail-product/<?= $product['id_product'] ?>" class="btn btn-info btn-sm">Detail</a>
+                                            <a href="/admin/update-product/<?= $product['id_product'] ?>" class="btn btn-warning btn-sm">Edit</a>
+                                            <button type="button"
+                                                class="btn btn-danger btn-sm"
+                                                data-toggle="modal"
+                                                data-target="#deleteModal"
+                                                data-id="<?= $product['id_product'] ?>"
+                                                data-name="<?= esc($product['product_name']) ?>">
+                                                Delete
+                                            </button>
                                         </td>
                                     </tr>
                                 <?php endforeach; ?>

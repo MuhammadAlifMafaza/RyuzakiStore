@@ -6,7 +6,7 @@
         <?= $this->include('admin/layout/topbar') ?>
         <div class="container-fluid">
             <h1 class="h3 mb-2 text-gray-800">Edit Product</h1>
-            <form action="/update-product/<?= $product['id_product'] ?>" method="post" enctype="multipart/form-data">
+            <form action="/admin/update-product/<?= $product['id_product'] ?>" method="post" enctype="multipart/form-data">
                 <div class="form-group">
                     <label for="product_name">Product Name</label>
                     <input type="text" class="form-control" name="product_name" value="<?= $product['product_name'] ?>" required>
