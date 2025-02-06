@@ -25,7 +25,7 @@
                     <li class="nav-item"><a class="nav-link" href="<?= site_url('contact') ?>">Contact</a></li>
                     <li class="nav-item"><a class="nav-link" href="<?= site_url('About') ?>">About</a></li>
                     <li class="nav-item">
-                        <a class="nav-link" href="<?= site_url('cart') ?>">🛒 Keranjang <span class="badge bg-danger">0</span></a>
+                        <a class="nav-link" href="<?= site_url('/cart') ?>">🛒 Keranjang <span class="badge bg-danger">0</span></a>
                     </li>
                 </ul>
                 <ul class="navbar-nav">

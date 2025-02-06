@@ -17,6 +17,11 @@ class ProductController extends Controller
     // menampilkan data product di halaman pelanggan(home)
     public function tampilDetail($id_product)
     {
+        $session = session();
+        if (!$session->get('is_logged_in')) {
+            return redirect()->to('/customerAuth/login');
+        }
+
         $productModel = new ProductModel();
         $product = $productModel->where('id_product', $id_product)->first();
 

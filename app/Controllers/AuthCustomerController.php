@@ -29,7 +29,7 @@ class AuthCustomerController extends Controller
 
         if ($customer && password_verify($password, $customer['password'])) {
             session()->set([
-                'user_id'    => $customer['id_customer'],
+                'id_customer'    => $customer['id_customer'],
                 'username'   => $customer['username'],
                 'full_name'  => $customer['full_name'],
                 'role'       => 'customer',
@@ -84,10 +84,10 @@ class AuthCustomerController extends Controller
 
         $datePart = date('Ymd');
         $randomPart = strtoupper(bin2hex(random_bytes(2))); // menghasilkan 4 karakter acak
-        $customer_id = sprintf("CUS-%s-%s", $datePart, $randomPart);
+        $id_customer = sprintf("CUS-%s-%s", $datePart, $randomPart);
 
         $customerModel->save([
-            'id_customer'      => $customer_id,
+            'id_customer'      => $id_customer,
             'username'         => $username,
             'full_name'        => $full_name,
             'email'            => $email,
@@ -100,7 +100,7 @@ class AuthCustomerController extends Controller
         ]);
 
         $data = [
-            'id_customer'      => $customer_id,
+            'id_customer'      => $id_customer,
             'username'         => $username,
             'full_name'        => $full_name,
             'email'            => $email,
@@ -116,6 +116,6 @@ class AuthCustomerController extends Controller
             return redirect()->back()->with('error', 'Terjadi kesalahan saat menyimpan data.');
         }
 
-        return redirect()->to('/customerAuth/login')->with('success', "Registrasi berhasil! ID Anda: $customer_id");
+        return redirect()->to('/customerAuth/login')->with('success', "Registrasi berhasil! ID Anda: $id_customer");
     }
 }

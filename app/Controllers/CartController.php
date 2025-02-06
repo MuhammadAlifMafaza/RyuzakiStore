@@ -51,7 +51,7 @@ class CartController extends Controller
         $id_cart = 'CART' . strtoupper(substr(md5(uniqid()), 0, 8));
         $cartData = [
             'id_cart'     => $id_cart,
-            'id_customer' => $this->session->get('customer_id'),
+            'id_customer' => $this->session->get('id_customer'),
             'id_product'  => $productId,
             'quantity'    => $quantity,
             'created_at'  => date('Y-m-d H:i:s')
@@ -70,10 +70,10 @@ class CartController extends Controller
             return redirect()->to('/customerAuth/login');
         }
 
-        $customerId = $this->session->get('customer_id');
+        $customerId = $this->session->get('id_customer');
         $cartItems  = $this->cartModel->getCartByCustomerId($customerId);
 
-        return view('customer/cart', [
+        return view('cart/cart', [
             'isLoggedIn' => true,
             'cartItems'  => $cartItems,
         ]);
@@ -99,6 +99,32 @@ class CartController extends Controller
         return redirect()->to('/cart')->with('success', 'Kuantitas diperbarui');
     }
 
+    public function update_quantity()
+    {
+        $session = session();
+        if (!$session->get('is_logged_in')) {
+            return $this->response->setStatusCode(401)->setJSON(['error' => 'Anda harus login terlebih dahulu.']);
+        }
+
+        // Mengambil input JSON
+        $json = $this->request->getJSON();
+        if (!$json || !isset($json->id_cart) || !isset($json->quantity)) {
+            return $this->response->setStatusCode(400)->setJSON(['error' => 'Input tidak valid.']);
+        }
+
+        $id_cart  = $json->id_cart;
+        $quantity = (int)$json->quantity;
+
+        if ($quantity <= 0) {
+            return $this->response->setStatusCode(400)->setJSON(['error' => 'Kuantitas harus lebih besar dari 0.']);
+        }
+
+        // Memperbarui kuantitas di model
+        $this->cartModel->updateQuantity($id_cart, $quantity);
+
+        return $this->response->setJSON(['success' => true]);
+    }
+
     /* Menghapus item dari keranjang */
     public function removeFromCart($cartId)
     {
@@ -122,7 +148,7 @@ class CartController extends Controller
         }
 
 
-        $customerId = $this->session->get('customer_id');
+        $customerId = $this->session->get('id_customer');
         $this->cartModel->clearCartByCustomerId($customerId);
 
         return redirect()->to('/cart')->with('success', 'Keranjang telah dikosongkan');

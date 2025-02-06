@@ -37,10 +37,10 @@ class OrderController extends Controller
         if (!$session->get('is_logged_in')) {
             return redirect()->to('/customerAuth/login');
         }
-        $userId = $session->get('user_id'); // Mendapatkan user_id dari session
+        $customerId = $session->get('user_id'); // Mendapatkan user_id dari session
         $orderData = [
             'id_order' => uniqid('ORD'), // ID order baru, bisa menggunakan uniqid
-            'id_user' => $userId,
+            'id_user' => $customerId,
             'order_date' => date('Y-m-d H:i:s'),
             'status' => 'pending', // Status order dimulai dengan 'pending'
             'total_amount' => 0, // Total amount akan dihitung nanti
@@ -50,7 +50,7 @@ class OrderController extends Controller
         $orderId = $this->orderModel->createOrder($orderData);
 
         // Mengambil produk yang dipilih oleh user
-        $cartItems = $this->getCartItemsByUserId($userId); // Mengambil data dari cart
+        $cartItems = $this->getCartItemsBycustomerId($customerId); // Mengambil data dari cart
 
         $totalAmount = 0;
 
@@ -76,7 +76,7 @@ class OrderController extends Controller
         $this->orderModel->updateOrderStatus($orderId, ['total_amount' => $totalAmount]);
 
         // Menghapus item dari cart setelah order selesai
-        $this->clearCart($userId);
+        $this->clearCart($customerId);
 
         return redirect()->to('/order/' . $orderId); // Redirect ke halaman order detail
     }
@@ -84,7 +84,7 @@ class OrderController extends Controller
     /**
      * Mengambil item dari cart berdasarkan user_id
      */
-    private function getCartItemsByUserId($userId)
+    private function getCartItemsBycustomerId($customerId)
     {
         $session = session();
         if (!$session->get('is_logged_in')) {
@@ -92,20 +92,20 @@ class OrderController extends Controller
         }
         // Mengambil data cart yang relevan, menggunakan CartModel
         $cartModel = new \App\Models\CartModel();
-        return $cartModel->getCartByUserId($userId);
+        return $cartModel->getCartByCustomerId($customerId);
     }
 
     /**
      * Menghapus item dari cart setelah order dibuat
      */
-    private function clearCart($userId)
+    private function clearCart($customerId)
     {
         $session = session();
         if (!$session->get('is_logged_in')) {
             return redirect()->to('/customerAuth/login');
         }
         $cartModel = new \App\Models\CartModel();
-        $cartItems = $cartModel->getCartByUserId($userId);
+        $cartItems = $cartModel->getCartByCustomerId($customerId);
 
         foreach ($cartItems as $cartItem) {
             $cartModel->deleteCartItem($cartItem['id_cart']);

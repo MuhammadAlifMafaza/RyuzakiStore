@@ -26,16 +26,14 @@ $routes->get('/checkout', 'OrderController::index');
 $routes->group('', function ($routes) {
     // Menampilkan halaman keranjang belanja
     $routes->get('cart', 'CartController::viewCart');
-
     // Menambahkan produk ke keranjang. Misalnya, URL: /cart/add/12345
     $routes->post('cart/addToCart/(:any)', 'CartController::addToCart/$1');
-
     // Mengupdate kuantitas produk dalam keranjang. Misalnya, URL: /cart/update/CARTXXXXXXXX
     $routes->post('cart/update/(:any)', 'CartController::updateCart/$1');
-
+    // update quantity keranjang belanja
+    $routes->post('cart/update_quantity', 'CartController::update_quantity');
     // Menghapus item dari keranjang. Misalnya, URL: /cart/remove/CARTXXXXXXXX
     $routes->get('cart/remove/(:any)', 'CartController::removeFromCart/$1');
-
     // Menghapus semua item dari keranjang
     $routes->get('cart/clear', 'CartController::clearCart');
 });

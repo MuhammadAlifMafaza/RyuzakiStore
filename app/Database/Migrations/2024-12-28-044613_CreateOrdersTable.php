@@ -11,7 +11,8 @@ class CreateOrdersTable extends Migration
         $this->forge->addField([
             'id_order' => ['type' => 'CHAR', 'constraint' => '12',],
             'id_customer'      => ['type' => 'VARCHAR', 'constraint' => 12, 'null' => false],
-            'order_date' => ['type' => 'DATETIME', 'null' => true,],
+            'order_date' => ['type' => 'TEXT', 'null' => true,],
+            'destination_address' => ['type' => 'DATETIME', 'null' => false,],
             'status' => [
                 'type' => 'ENUM',
                 'constraint' => ['pending', 'shipped', 'completed', 'canceled'],

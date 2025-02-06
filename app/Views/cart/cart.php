@@ -16,21 +16,34 @@
                 </div>
 
                 <?php
-                $cartModel = new \App\Models\CartModel();
+                // Inisialisasi model
+                $cartModel    = new \App\Models\CartModel();
                 $productModel = new \App\Models\ProductModel();
-                $userId = session()->get('id_user');
-                $cartItems = $cartModel->getCartByUserId($userId);
-                $totalPrice = 0;
+                // Gunakan key session yang benar (misalnya 'user_id')
+                $userId    = session()->get('user_id');
+                $cartItems = $cartModel->getCartByCustomerId($userId);
                 ?>
 
                 <?php foreach ($cartItems as $item):
+                    // Ambil data produk berdasarkan id_product pada item keranjang
                     $product = $productModel->find($item['id_product']);
+                    if (!$product) continue; // Skip jika produk tidak ditemukan
+
+                    // Jika produk memiliki lebih dari satu gambar (dipisahkan dengan koma),
+                    // gunakan gambar pertama sebagai thumbnail.
+                    $images = explode(',', $product['image']);
+                    $imagePath = trim($images[0]);
+                    if (!str_starts_with($imagePath, 'uploads/')) {
+                        $imagePath = 'uploads/img/products/' . $imagePath;
+                    }
+
+                    // Hitung subtotal awal untuk item ini
                     $subtotal = $product['price'] * $item['quantity'];
-                    $totalPrice += $subtotal;
                 ?>
                     <div class="d-flex align-items-center border-bottom py-3">
-                        <input type="checkbox" class="product-checkbox" data-price="<?= $subtotal ?>">
-                        <img src="<?= base_url('uploads/img/products/' . $product['image']) ?>" width="80" class="mx-3">
+                        <!-- Checkbox dengan data-price (subtotal) dan data-unit (harga satuan) -->
+                        <input type="checkbox" class="product-checkbox" data-price="<?= $subtotal ?>" data-unit="<?= $product['price'] ?>">
+                        <img src="<?= base_url($imagePath) ?>" width="80" class="mx-3" alt="<?= esc($product['product_name']) ?>">
                         <div class="flex-grow-1">
                             <h6 class="fw-bold"><?= esc($product['product_name']) ?></h6>
                             <p class="text-muted small"><?= esc($product['category']) ?></p>
@@ -43,7 +56,9 @@
                                 max="<?= $product['stock_quantity'] ?>"
                                 data-id="<?= $item['id_cart'] ?>" style="width: 50px;">
                             <button class="btn btn-outline-secondary btn-sm increase-qty">+</button>
-                            <a href="<?= base_url('cart/remove/' . $item['id_cart']) ?>" class="text-danger ms-3"><i class="fas fa-trash-alt"></i></a>
+                            <a href="<?= base_url('cart/remove/' . $item['id_cart']) ?>" class="text-danger ms-3">
+                                <i class="fas fa-trash-alt"></i>
+                            </a>
                         </div>
                     </div>
                 <?php endforeach; ?>
@@ -56,9 +71,12 @@
                 <h5 class="fw-bold">Ringkasan Belanja</h5>
                 <div class="d-flex justify-content-between">
                     <p>Total</p>
-                    <p class="fw-bold text-primary" id="total-price">Rp <?= number_format($totalPrice, 0, ',', '.') ?></p>
+                    <!-- Nilai awal di-set 0 karena total hanya dihitung dari item yang dicentang -->
+                    <p class="fw-bold text-primary" id="total-price">Rp 0</p>
                 </div>
-                <a href="<?= base_url('checkout') ?>" class="btn btn-success w-100">Beli (<?= count($cartItems) ?>)</a>
+                <a href="<?= base_url('checkout') ?>" id="checkout-button" class="btn btn-success w-100">
+                    Beli (<?= count($cartItems) ?>)
+                </a>
             </div>
         </div>
     </div>
@@ -66,9 +84,12 @@
 
 <?= $this->include('home/layout/footer') ?>
 
+<!-- JavaScript untuk update quantity secara realtime dan perhitungan total -->
 <script>
+    // Event listener untuk tombol increase dan decrease
     document.querySelectorAll(".increase-qty, .decrease-qty").forEach(button => {
         button.addEventListener("click", function() {
+            // Cari input quantity di baris yang sama
             let input = this.closest(".d-flex").querySelector(".quantity");
             let maxStock = parseInt(input.getAttribute("max"));
             let newQty = parseInt(input.value);
@@ -78,12 +99,29 @@
             } else if (this.classList.contains("decrease-qty") && newQty > 1) {
                 newQty--;
             }
-
             input.value = newQty;
+
+            // Update subtotal untuk baris ini secara realtime:
+            // Cari container baris (misalnya, dengan kelas border-bottom)
+            let container = this.closest(".border-bottom");
+            // Dapatkan checkbox yang menyimpan data harga
+            let checkbox = container.querySelector(".product-checkbox");
+            // Ambil unit price dari atribut data-unit
+            let unitPrice = parseFloat(checkbox.getAttribute("data-unit"));
+            // Hitung subtotal baru
+            let newSubtotal = unitPrice * newQty;
+            // Update atribut data-price dengan subtotal baru
+            checkbox.setAttribute("data-price", newSubtotal);
+
+            // Perbarui total keseluruhan
+            updateTotal();
+
+            // Lakukan update ke server via AJAX
             updateCartQuantity(input.dataset.id, newQty);
         });
     });
 
+    // Fungsi untuk update quantity via AJAX
     function updateCartQuantity(id_cart, quantity) {
         fetch("<?= base_url('cart/update_quantity') ?>", {
                 method: "POST",
@@ -94,30 +132,59 @@
                     id_cart,
                     quantity
                 })
-            }).then(response => response.json())
-            .then(data => location.reload());
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    // Jika update sukses, kita sudah update UI sebelumnya secara realtime.
+                    // Opsional: updateTotal(); (jika diperlukan)
+                } else {
+                    alert(data.error || "Terjadi kesalahan saat mengupdate kuantitas.");
+                }
+            })
+            .catch(error => {
+                console.error("Error:", error);
+            });
     }
 
+    // Fungsi untuk menghitung ulang total harga berdasarkan item yang dicentang
+    function updateTotal() {
+        let checkboxes = document.querySelectorAll(".product-checkbox");
+        let totalPriceElem = document.getElementById("total-price");
+        let total = 0;
+        checkboxes.forEach(cb => {
+            if (cb.checked) {
+                total += parseFloat(cb.getAttribute("data-price"));
+            }
+        });
+        totalPriceElem.textContent = "Rp " + total.toLocaleString("id-ID");
+    }
+
+    // Event listener untuk checkbox "select all" dan masing-masing checkbox
     document.addEventListener("DOMContentLoaded", function() {
         let checkboxes = document.querySelectorAll(".product-checkbox");
         let selectAll = document.getElementById("select-all");
-        let totalPriceElem = document.getElementById("total-price");
 
         selectAll.addEventListener("change", function() {
             checkboxes.forEach(cb => cb.checked = this.checked);
             updateTotal();
         });
 
-        document.body.addEventListener("change", function(e) {
-            if (e.target.classList.contains("product-checkbox")) updateTotal();
+        checkboxes.forEach(cb => {
+            cb.addEventListener("change", updateTotal);
         });
+    });
 
-        function updateTotal() {
-            let total = 0;
-            checkboxes.forEach(cb => {
-                if (cb.checked) total += parseFloat(cb.dataset.price);
-            });
-            totalPriceElem.textContent = "Rp " + total.toLocaleString("id-ID");
+    // Validasi checkout: pastikan setidaknya satu checkbox dicentang sebelum melanjutkan transaksi
+    document.getElementById("checkout-button").addEventListener("click", function(e) {
+        let checkboxes = document.querySelectorAll(".product-checkbox");
+        let isAnyChecked = false;
+        checkboxes.forEach(cb => {
+            if (cb.checked) isAnyChecked = true;
+        });
+        if (!isAnyChecked) {
+            e.preventDefault();
+            alert("Silakan centang minimal satu produk untuk melanjutkan transaksi.");
         }
     });
 </script>
