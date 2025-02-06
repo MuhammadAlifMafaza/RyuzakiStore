@@ -14,19 +14,27 @@ class CartController extends Controller
 
     public function __construct()
     {
-        $this->cartModel = new CartModel();
+        $this->cartModel    = new CartModel();
         $this->productModel = new ProductModel();
-        $this->session = session(); // Inisialisasi session
+        $this->session      = session();
     }
 
-    /**
-     * Menambahkan produk ke dalam keranjang
-     */
+    public function index()
+    {
+        // Pastikan path view sesuai dengan struktur folder di aplikasi Anda
+        $session = session();
+        if (!$session->get('is_logged_in')) {
+            return redirect()->to('/customerAuth/login');
+        }
+        return view('cart/cart');
+    }
+
+    /* Menambahkan produk ke dalam keranjang */
     public function addToCart($productId)
     {
-        if (!$this->session->get('isLoggedIn')) {
-            // Jika user belum login, redirect ke halaman login
-            return redirect()->to('/login');
+        $session = session();
+        if (!$session->get('is_logged_in')) {
+            return redirect()->to('/customerAuth/login');
         }
 
         // Ambil data produk berdasarkan productId
@@ -36,94 +44,87 @@ class CartController extends Controller
             return redirect()->back()->with('error', 'Produk tidak ditemukan');
         }
 
-        // Ambil data kuantitas dari input (default 1 jika tidak ada input)
+        // Dapatkan kuantitas dari input, default 1 jika tidak diset
         $quantity = $this->request->getVar('quantity') ?: 1;
 
-        // Data yang akan ditambahkan ke dalam cart
+        // 'CART' (4 karakter) + 8 karakter acak
+        $id_cart = 'CART' . strtoupper(substr(md5(uniqid()), 0, 8));
         $cartData = [
-            'id_cart' => uniqid('CART'), // ID cart baru, bisa menggunakan uniqid
-            'id_user' => $this->session->get('user_id'), // ID user dari session
-            'id_product' => $productId,
-            'quantity' => $quantity,
-            'created_at' => date('Y-m-d H:i:s')
+            'id_cart'     => $id_cart,
+            'id_customer' => $this->session->get('customer_id'),
+            'id_product'  => $productId,
+            'quantity'    => $quantity,
+            'created_at'  => date('Y-m-d H:i:s')
         ];
 
-        // Menambahkan item ke dalam cart
         $this->cartModel->addToCart($cartData);
 
-        return redirect()->to('/cart'); // Kembali ke halaman cart
+        return redirect()->to('/cart')->with('success', 'Produk berhasil ditambahkan ke keranjang');
     }
 
-    /**
-     * Menampilkan halaman keranjang belanja
-     */
+    /* Menampilkan halaman keranjang belanja */
     public function viewCart()
     {
-        if (!$this->session->get('isLoggedIn')) {
-            return redirect()->to('/login'); // Redirect ke login jika user belum login
+        $session = session();
+        if (!$session->get('is_logged_in')) {
+            return redirect()->to('/customerAuth/login');
         }
 
-        $userId = $this->session->get('user_id');
-        $cartItems = $this->cartModel->getCartByUserId($userId); // Ambil item cart untuk user
+        $customerId = $this->session->get('customer_id');
+        $cartItems  = $this->cartModel->getCartByCustomerId($customerId);
 
-        // Memasukkan data ke dalam view
-        $data = [
+        return view('customer/cart', [
             'isLoggedIn' => true,
-            'cartItems' => $cartItems,
-        ];
-
-        return view('customer/cart', $data); // Ganti dengan nama view yang sesuai
+            'cartItems'  => $cartItems,
+        ]);
     }
 
-    /**
-     * Mengupdate kuantitas produk dalam cart
-     */
+    /* Mengupdate kuantitas produk dalam cart */
     public function updateCart($cartId)
     {
-        if (!$this->session->get('isLoggedIn')) {
-            return redirect()->to('/login');
+        $session = session();
+        if (!$session->get('is_logged_in')) {
+            return redirect()->to('/customerAuth/login');
         }
 
-        // Ambil kuantitas baru dari input
+
         $quantity = $this->request->getVar('quantity');
 
         if ($quantity <= 0) {
             return redirect()->back()->with('error', 'Kuantitas harus lebih besar dari 0');
         }
 
-        // Update kuantitas dalam cart
         $this->cartModel->updateQuantity($cartId, $quantity);
 
-        return redirect()->to('/cart'); // Redirect kembali ke halaman cart
+        return redirect()->to('/cart')->with('success', 'Kuantitas diperbarui');
     }
 
-    /**
-     * Menghapus item dari keranjang
-     */
+    /* Menghapus item dari keranjang */
     public function removeFromCart($cartId)
     {
-        if (!$this->session->get('isLoggedIn')) {
-            return redirect()->to('/login');
+        $session = session();
+        if (!$session->get('is_logged_in')) {
+            return redirect()->to('/customerAuth/login');
         }
 
-        // Menghapus item dari cart
+
         $this->cartModel->removeFromCart($cartId);
 
-        return redirect()->to('/cart'); // Kembali ke halaman cart
+        return redirect()->to('/cart')->with('success', 'Produk dihapus dari keranjang');
     }
 
-    /**
-     * Menghapus semua item dari keranjang
-     */
+    /* Menghapus semua item dari keranjang */
     public function clearCart()
     {
-        if (!$this->session->get('isLoggedIn')) {
-            return redirect()->to('/login');
+        $session = session();
+        if (!$session->get('is_logged_in')) {
+            return redirect()->to('/customerAuth/login');
         }
 
-        // Menghapus semua item dalam cart
-        $this->cartModel->clearCartByUserId($this->session->get('user_id'));
 
-        return redirect()->to('/cart'); // Kembali ke halaman cart
+        $customerId = $this->session->get('customer_id');
+        $this->cartModel->clearCartByCustomerId($customerId);
+
+        return redirect()->to('/cart')->with('success', 'Keranjang telah dikosongkan');
     }
 }

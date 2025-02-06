@@ -9,15 +9,24 @@ class CustomerModel extends Model
     protected $table = 'customer';
     protected $primaryKey = 'id_customer';
     protected $allowedFields = [
-        'username','password','full_name', 'email', 'img_profile',
-        'phone_number','address','membership_level',
-        'total_spent','created_at','updated_at'
+        'id_customer',
+        'username',
+        'password',
+        'full_name',
+        'img_profile',
+        'email',
+        'phone_number',
+        'address',
+        'membership_level',
+        'total_spent',
+        'created_at',
+        'updated_at'
     ];
 
     protected $useTimestamps = true;
-   
+
     // Method to fetch customer details (optional, if you need it)
-    public function getCustomerDetails($id_customer)
+    public function getProfileCustomer($id_customer)
     {
         return $this->db->table('customer')
             ->select('full_name, phone_number, address, membership_level, total_spent')
@@ -27,16 +36,16 @@ class CustomerModel extends Model
     }
 
     // Method to update user and customer details
-    public function updateUserDetails($customerId, $userData, $customerDetailsData)
+    public function updateUpdateProfile($IdCustomer, $userData, $ProfileDataCustomer)
     {
         // Start a transaction
         $this->db->transBegin();
 
         // Update user data
-        $this->update($customerId, $userData);
+        $this->update($IdCustomer, $userData);
 
         // Update customer details
-        $this->db->table('customer')->where('id_customer', $customerId)->update($customerDetailsData);
+        $this->db->table('customer')->where('id_customer', $IdCustomer)->update($ProfileDataCustomer);
 
         // Commit transaction if no error
         if ($this->db->transStatus() === FALSE) {

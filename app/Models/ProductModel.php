@@ -9,8 +9,16 @@ class ProductModel extends Model
     protected $table = 'products'; // Table name
     protected $primaryKey = 'id_product'; // Primary key of the table
     protected $allowedFields = [
-        'id_product', 'product_name', 'category', 'tags', 'description',
-        'image', 'price', 'stock_quantity', 'created_at', 'updated_at',
+        'id_product',
+        'product_name',
+        'category',
+        'tags',
+        'description',
+        'image',
+        'price',
+        'stock_quantity',
+        'created_at',
+        'updated_at',
     ];
 
     protected $useTimestamps = true; // Enable timestamps for created_at and updated_at
@@ -43,6 +51,22 @@ class ProductModel extends Model
         ],
     ];
 
+    // function search product
+    public function searchProducts($keyword = null, $category = null)
+    {
+        $builder = $this->table($this->table);
+
+        if (!empty($keyword)) {
+            $builder->like('product_name', $keyword);
+        }
+
+        if (!empty($category) && $category !== 'all') {
+            $builder->where('category', $category);
+        }
+
+        return $builder->get()->getResultArray();
+    }
+
     // Function to fetch all products
     public function getAllProducts()
     {
@@ -67,9 +91,16 @@ class ProductModel extends Model
         return $this->update($id_product, $data);
     }
 
-    // Function to delete product by ID
-    public function deleteProduct($id_product)
+    // Function untuk delete product by ID
+    public function deleteProduct($id)
     {
-        return $this->delete($id_product);
+        // melakukan cek data apabila data ada
+        $product = $this->find($id);
+        if (!$product) {
+            return false; // Product tidak ditemukan
+        }
+
+        // Menghapus data product
+        return $this->delete($id);
     }
 }

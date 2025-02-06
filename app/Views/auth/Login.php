@@ -38,12 +38,6 @@
                                         <div class="form-group">
                                             <input type="password" class="form-control form-control-user" id="password" name="password" placeholder="Password" required>
                                         </div>
-                                        <div class="form-group">
-                                            <select class="form-control form-control-user" name="role" required>
-                                                <option value="admin" <?= old('role') === 'admin' ? 'selected' : '' ?>>Admin</option>
-                                                <option value="owner" <?= old('role') === 'owner' ? 'selected' : '' ?>>Owner</option>
-                                            </select>
-                                        </div>
                                         <button type="submit" class="btn btn-primary btn-user btn-block">Login</button>
                                     </form>
                                     <hr>

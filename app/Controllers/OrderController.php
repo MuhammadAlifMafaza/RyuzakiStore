@@ -20,12 +20,23 @@ class OrderController extends Controller
         $this->productModel = new ProductModel();
     }
 
+    public function index()
+    {
+        $session = session();
+        if (!$session->get('is_logged_in')) {
+            return redirect()->to('/customerAuth/login');
+        }
+        return view('home\checkout.php');
+    }
     /**
      * Membuat order baru
      */
     public function createOrder()
     {
         $session = session();
+        if (!$session->get('is_logged_in')) {
+            return redirect()->to('/customerAuth/login');
+        }
         $userId = $session->get('user_id'); // Mendapatkan user_id dari session
         $orderData = [
             'id_order' => uniqid('ORD'), // ID order baru, bisa menggunakan uniqid
@@ -75,6 +86,10 @@ class OrderController extends Controller
      */
     private function getCartItemsByUserId($userId)
     {
+        $session = session();
+        if (!$session->get('is_logged_in')) {
+            return redirect()->to('/customerAuth/login');
+        }
         // Mengambil data cart yang relevan, menggunakan CartModel
         $cartModel = new \App\Models\CartModel();
         return $cartModel->getCartByUserId($userId);
@@ -85,6 +100,10 @@ class OrderController extends Controller
      */
     private function clearCart($userId)
     {
+        $session = session();
+        if (!$session->get('is_logged_in')) {
+            return redirect()->to('/customerAuth/login');
+        }
         $cartModel = new \App\Models\CartModel();
         $cartItems = $cartModel->getCartByUserId($userId);
 

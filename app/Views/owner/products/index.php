@@ -45,9 +45,9 @@
                                         <td>Rp <?= number_format($product['price'], 2) ?></td>
                                         <td><?= $product['stock_quantity'] ?></td>
                                         <td>
-                                            <a href="/detail-product/<?= $product['id_product'] ?>" class="btn btn-info btn-sm">Detail</a>
-                                            <a href="/update-product/<?= $product['id_product'] ?>" class="btn btn-warning btn-sm">Edit</a>
-                                            <form action="/delete-product/<?= $product['id_product'] ?>" method="post" onsubmit="return confirm('Are you sure you want to delete this product?')">
+                                            <a href="<?= base_url('/owner/detail-product/' . $product['id_product']) ?>" class="btn btn-info btn-sm">Detail</a>
+                                            <a href="<?= base_url('/owner/update-product/' . $product['id_product']) ?>" class="btn btn-warning btn-sm">Edit</a>
+                                            <form action="<?= base_url('/owner/delete-product/' . $product['id_product']) ?>" method="post" onsubmit="return confirm('Are you sure you want to delete this product?')">
                                                 <input type="hidden" name="_method" value="DELETE"> <!-- Hidden method field -->
                                                 <button type="submit" class="btn btn-danger btn-sm">Delete</button>
                                             </form>

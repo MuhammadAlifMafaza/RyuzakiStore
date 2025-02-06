@@ -16,25 +16,28 @@ class CustomerController extends Controller
         $this->CustomerModel = new CustomerModel();
     }
 
-    public function index(){
-        return view('\home\home');
-    }
-    public function products(){
-        return view('\home\product');
-    }
-    public function profile()
+    private function requireLogin()
     {
         if (!$this->session->get('logged_in')) {
-            return redirect()->to('/login');
+            return redirect()->to('customerAuth/login')->send();
         }
+    }
+
+    public function index()
+    {
+        $this->requireLogin();
+        return view('home/home');
+    }
+
+    public function profile()
+    {
+        $this->requireLogin();
 
         $customerId = $this->session->get('id_customer');
 
-        // Fetch user and customer details
         $user = $this->CustomerModel->find($customerId);
         $customerDetails = $this->CustomerModel->getCustomerDetails($customerId);
 
-        // Combine the user data and details for the view
         $data = [
             'isLoggedIn' => true,
             'user' => $user,
@@ -46,24 +49,22 @@ class CustomerController extends Controller
 
     public function updateProfile()
     {
-        if (!$this->session->get('logged_in')) {
-            return redirect()->to('/login');
-        }
+        $this->requireLogin();
 
         $customerId = $this->session->get('id_customer');
 
         $userData = [
-            'username' => $this->request->getPost('username'),
-            'email' => $this->request->getPost('email'),
+            'username'   => $this->request->getPost('username'),
+            'email'      => $this->request->getPost('email'),
             'updated_at' => date('Y-m-d H:i:s')
         ];
 
         $customerDetailsData = [
-            'full_name' => $this->request->getPost('full_name'),
-            'phone_number' => $this->request->getPost('phone_number'),
-            'address' => $this->request->getPost('address'),
+            'full_name'        => $this->request->getPost('full_name'),
+            'phone_number'     => $this->request->getPost('phone_number'),
+            'address'          => $this->request->getPost('address'),
             'membership_level' => $this->request->getPost('membership_level'),
-            'total_spent' => $this->request->getPost('total_spent')
+            'total_spent'      => $this->request->getPost('total_spent')
         ];
 
         $updateStatus = $this->CustomerModel->updateUserDetails($customerId, $userData, $customerDetailsData);

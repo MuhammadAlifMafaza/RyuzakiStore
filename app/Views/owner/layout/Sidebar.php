@@ -28,7 +28,7 @@
 
     <!-- Nav Item - Pages Collapse Menu -->
     <li class="nav-item">
-        <a class="nav-link collapsed" href="<?= base_url('/owner/product-list') ?>">
+        <a class="nav-link collapsed" href="<?= base_url("/owner/product-list") ?>">
             <i class="fas fa-fw fa-boxes"></i>
             <span>Products</span>
         </a>
@@ -36,7 +36,7 @@
 
     <!-- Nav Item - Utilities Collapse Menu -->
     <li class="nav-item">
-        <a class="nav-link collapsed" href="<?= base_url('')?>" data-toggle="collapse" data-target="#collapseUtilities"
+        <a class="nav-link collapsed" href="<?= base_url('') ?>" data-toggle="collapse" data-target="#collapseUtilities"
             aria-expanded="true" aria-controls="collapseUtilities">
             <i class="fas fa-fw fa-user"></i>
             <span>Users</span>
@@ -45,9 +45,9 @@
             data-parent="#accordionSidebar">
             <div class="bg-white py-2 collapse-inner rounded">
                 <h6 class="collapse-header">Data Users:</h6>
-                <a class="collapse-item" href="<?= base_url('/admin-list') ?>">Admin</a>
-                <a class="collapse-item" href="<?= base_url('/customer-list') ?>">Customer</a>
-                <a class="collapse-item" href="<?= base_url('/owner-list') ?>">Owner</a>
+                <a class="collapse-item" href="<?= base_url('owner/list-DataAdmin') ?>">Admin</a>
+                <a class="collapse-item" href="<?= base_url('owner/list-DataCustomer') ?>">Customer</a>
+                <a class="collapse-item" href="<?= base_url('owner/list-DataOwner') ?>">Owner</a>
             </div>
         </div>
     </li>
@@ -60,11 +60,19 @@
         Transaksi
     </div>
 
-    <!-- Nav Item - Charts -->
     <li class="nav-item">
-        <a class="nav-link" href="<?= base_url('')?>">
+        <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseTwo"
+            aria-expanded="true" aria-controls="collapseTwo">
             <i class="fas fa-fw fa-dollar-sign"></i>
-            <span>Transaction</span></a>
+            <span>Transaction</span>
+        </a>
+        <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
+            <div class="bg-white py-2 collapse-inner rounded">
+                <h6 class="collapse-header">Transaction:</h6>
+                <a class="collapse-item" href="">Order</a>
+                <a class="collapse-item" href="">Cards</a>
+            </div>
+        </div>
     </li>
 
     <!-- Nav Item - Pages Collapse Menu -->
@@ -89,7 +97,7 @@
 
     <!-- Nav Item - Tables -->
     <li class="nav-item">
-        <a class="nav-link" href="<?= base_url('')?>">
+        <a class="nav-link" href="<?= base_url('') ?>">
             <i class="fas fa-fw fa-table"></i>
             <span>Tables</span></a>
     </li>
