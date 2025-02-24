@@ -1,4 +1,5 @@
 <?php
+// File: app/Controllers/OrderController.php
 
 namespace App\Controllers;
 
@@ -12,103 +13,43 @@ class OrderController extends Controller
     protected $orderModel;
     protected $orderItemModel;
     protected $productModel;
+    protected $session;
 
     public function __construct()
     {
-        $this->orderModel = new OrderModel();
-        $this->orderItemModel = new OrderItemModel();
-        $this->productModel = new ProductModel();
+        $this->orderModel      = new OrderModel();
+        $this->orderItemModel  = new OrderItemModel();
+        $this->productModel    = new ProductModel();
+        $this->session         = session();
     }
 
-    public function index()
+    public function detail($orderId)
     {
-        $session = session();
-        if (!$session->get('is_logged_in')) {
+        if (!$this->session->get('is_logged_in')) {
             return redirect()->to('/customerAuth/login');
         }
-        return view('home\checkout.php');
-    }
-    /**
-     * Membuat order baru
-     */
-    public function createOrder()
-    {
-        $session = session();
-        if (!$session->get('is_logged_in')) {
-            return redirect()->to('/customerAuth/login');
-        }
-        $customerId = $session->get('user_id'); // Mendapatkan user_id dari session
-        $orderData = [
-            'id_order' => uniqid('ORD'), // ID order baru, bisa menggunakan uniqid
-            'id_user' => $customerId,
-            'order_date' => date('Y-m-d H:i:s'),
-            'status' => 'pending', // Status order dimulai dengan 'pending'
-            'total_amount' => 0, // Total amount akan dihitung nanti
-        ];
 
-        // Membuat order baru
-        $orderId = $this->orderModel->createOrder($orderData);
-
-        // Mengambil produk yang dipilih oleh user
-        $cartItems = $this->getCartItemsBycustomerId($customerId); // Mengambil data dari cart
-
-        $totalAmount = 0;
-
-        // Menambahkan item ke dalam order
-        foreach ($cartItems as $cartItem) {
-            $product = $this->productModel->find($cartItem['id_product']);
-            $orderItemData = [
-                'id_order_item' => uniqid('OI'), // ID order item
-                'id_order' => $orderId,
-                'id_product' => $cartItem['id_product'],
-                'quantity' => $cartItem['quantity'],
-                'price' => $product['price'],
-            ];
-
-            // Menambahkan item ke order
-            $this->orderItemModel->addOrderItem($orderItemData);
-
-            // Menghitung total amount
-            $totalAmount += $cartItem['quantity'] * $product['price'];
+        // Ambil data order berdasarkan ID
+        $order = $this->orderModel->find($orderId);
+        if (!$order) {
+            return redirect()->to('/')->with('error', 'Order tidak ditemukan.');
         }
 
-        // Mengupdate total amount di order
-        $this->orderModel->updateOrderStatus($orderId, ['total_amount' => $totalAmount]);
-
-        // Menghapus item dari cart setelah order selesai
-        $this->clearCart($customerId);
-
-        return redirect()->to('/order/' . $orderId); // Redirect ke halaman order detail
-    }
-
-    /**
-     * Mengambil item dari cart berdasarkan user_id
-     */
-    private function getCartItemsBycustomerId($customerId)
-    {
-        $session = session();
-        if (!$session->get('is_logged_in')) {
-            return redirect()->to('/customerAuth/login');
+        // Ambil data order item
+        // Pastikan method getOrderItemsByOrderId() telah didefinisikan di OrderItemModel
+        $orderItems = $this->orderItemModel->getOrderItemsByOrderId($orderId);
+        if (!empty($orderItems)) {
+            foreach ($orderItems as &$item) {
+                $product = $this->productModel->find($item['id_product']);
+                $item['product_name']  = $product ? $product['product_name'] : 'Produk tidak ditemukan';
+                // Pastikan path gambar sesuai dengan struktur folder Anda
+                $item['product_image'] = $product ? base_url('uploads/img/products/' . explode(',', $product['image'])[0]) : '';
+            }
         }
-        // Mengambil data cart yang relevan, menggunakan CartModel
-        $cartModel = new \App\Models\CartModel();
-        return $cartModel->getCartByCustomerId($customerId);
-    }
 
-    /**
-     * Menghapus item dari cart setelah order dibuat
-     */
-    private function clearCart($customerId)
-    {
-        $session = session();
-        if (!$session->get('is_logged_in')) {
-            return redirect()->to('/customerAuth/login');
-        }
-        $cartModel = new \App\Models\CartModel();
-        $cartItems = $cartModel->getCartByCustomerId($customerId);
-
-        foreach ($cartItems as $cartItem) {
-            $cartModel->deleteCartItem($cartItem['id_cart']);
-        }
+        return view('order_detail', [
+            'order'      => $order,
+            'orderItems' => $orderItems
+        ]);
     }
 }

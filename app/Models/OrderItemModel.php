@@ -8,7 +8,9 @@ class OrderItemModel extends Model
 {
     protected $table = 'order_items';
     protected $primaryKey = 'id_order_item';
-    protected $allowedFields = ['id_order_item', 'id_order', 'id_product', 'quantity', 'price'];
+    protected $allowedFields = [
+        'id_order_item', 'id_order', 'id_product', 'quantity', 'price'
+    ];
 
     /* Menambahkan item ke dalam order */
     public function addOrderItem($orderItemData)

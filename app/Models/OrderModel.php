@@ -8,7 +8,10 @@ class OrderModel extends Model
 {
     protected $table = 'orders';
     protected $primaryKey = 'id_order';
-    protected $allowedFields = ['id_order', 'id_user', 'order_date', 'status', 'total_amount'];
+    protected $allowedFields = [
+        'id_order', 'id_customer', 'order_date', 'destination_address', 'status', 'total_amount'
+    ];
+
     protected $useTimestamps = true;
     /* Membuat order baru */
     public function createOrder($orderData)
@@ -26,8 +29,8 @@ class OrderModel extends Model
     /**
      * Mendapatkan pesanan berdasarkan user ID
      */
-    public function getOrdersByUserId($id_user)
+    public function getOrdersByCustomerId($id_customer)
     {
-        return $this->where('id_user', $id_user)->findAll();
+        return $this->where('id_customer', $id_customer)->findAll();
     }
 }

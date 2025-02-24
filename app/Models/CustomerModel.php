@@ -9,18 +9,9 @@ class CustomerModel extends Model
     protected $table = 'customer';
     protected $primaryKey = 'id_customer';
     protected $allowedFields = [
-        'id_customer',
-        'username',
-        'password',
-        'full_name',
-        'img_profile',
-        'email',
-        'phone_number',
-        'address',
-        'membership_level',
-        'total_spent',
-        'created_at',
-        'updated_at'
+        'id_customer', 'username', 'password', 'full_name',
+        'img_profile', 'email', 'phone_number', 'address',
+        'membership_level', 'total_spent', 'created_at', 'updated_at'
     ];
 
     protected $useTimestamps = true;

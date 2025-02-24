@@ -25,8 +25,9 @@ class Filters extends BaseFilters
         'forcehttps'    => ForceHTTPS::class,
         'pagecache'     => PageCache::class,
         'performance'   => PerformanceMetrics::class,
-        'admin' => \App\Filters\AdminFilter::class,
-        'owner' => \App\Filters\OwnerFilter::class,
+        'admin'         => \App\Filters\AdminFilter::class,
+        'owner'         => \App\Filters\OwnerFilter::class,
+        'auth'          => \App\Filters\AuthFilter::class,
         // 'authfilter' => \App\Filters\AuthFilter::class,
     ];
 

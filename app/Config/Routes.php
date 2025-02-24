@@ -16,27 +16,24 @@ $routes->group('customerAuth', function ($routes) {
     $routes->post('processRegister', 'AuthCustomerController::processRegister');
 });
 
-$routes->get('/home', 'CustomerController::index');
-$routes->get('/products/(:segment)', 'ProductController::tampilDetail/$1');
-$routes->get('/profile/', 'CustomerController::profile');
-
-// routes checkout
-$routes->get('/checkout', 'OrderController::index');
-
 $routes->group('', function ($routes) {
-    // Menampilkan halaman keranjang belanja
+    // Semua route di dalam grup ini hanya dapat diakses jika pengguna sudah login
+    $routes->get('home', 'CustomerController::index');
+    $routes->get('products/(:segment)', 'ProductController::tampilDetail/$1');
+    $routes->get('profile', 'CustomerController::profile');
+    // Route keranjang
     $routes->get('cart', 'CartController::viewCart');
-    // Menambahkan produk ke keranjang. Misalnya, URL: /cart/add/12345
     $routes->post('cart/addToCart/(:any)', 'CartController::addToCart/$1');
-    // Mengupdate kuantitas produk dalam keranjang. Misalnya, URL: /cart/update/CARTXXXXXXXX
     $routes->post('cart/update/(:any)', 'CartController::updateCart/$1');
-    // update quantity keranjang belanja
     $routes->post('cart/update_quantity', 'CartController::update_quantity');
-    // Menghapus item dari keranjang. Misalnya, URL: /cart/remove/CARTXXXXXXXX
     $routes->get('cart/remove/(:any)', 'CartController::removeFromCart/$1');
-    // Menghapus semua item dari keranjang
     $routes->get('cart/clear', 'CartController::clearCart');
+    // Route checkout
+    $routes->get('checkout', 'CheckoutController::index');
+    $routes->post('checkout/process', 'CheckoutController::processCheckout');
+    $routes->get('order/detail/(:any)', 'OrderController::detail/$1');
 });
+
 
 // Rute untuk AuthAdminController
 $routes->get('adminAuth/login', 'Admin\AuthAdminController::login'); // Halaman login

@@ -15,18 +15,9 @@
                     <a href="#" class="text-danger">Hapus</a>
                 </div>
 
-                <?php
-                // Inisialisasi model
-                $cartModel    = new \App\Models\CartModel();
-                $productModel = new \App\Models\ProductModel();
-                // Gunakan key session yang benar (misalnya 'user_id')
-                $userId    = session()->get('user_id');
-                $cartItems = $cartModel->getCartByCustomerId($userId);
-                ?>
-
                 <?php foreach ($cartItems as $item):
                     // Ambil data produk berdasarkan id_product pada item keranjang
-                    $product = $productModel->find($item['id_product']);
+                    $product = (new \App\Models\ProductModel())->find($item['id_product']);
                     if (!$product) continue; // Skip jika produk tidak ditemukan
 
                     // Jika produk memiliki lebih dari satu gambar (dipisahkan dengan koma),
@@ -83,7 +74,6 @@
 </div>
 
 <?= $this->include('home/layout/footer') ?>
-
 <!-- JavaScript untuk update quantity secara realtime dan perhitungan total -->
 <script>
     // Event listener untuk tombol increase dan decrease

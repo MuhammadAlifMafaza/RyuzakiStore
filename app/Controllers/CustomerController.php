@@ -18,7 +18,7 @@ class CustomerController extends Controller
 
     private function requireLogin()
     {
-        if (!$this->session->get('logged_in')) {
+        if (!$this->session->get('is_logged_in')) {
             return redirect()->to('customerAuth/login')->send();
         }
     }
@@ -26,7 +26,8 @@ class CustomerController extends Controller
     public function index()
     {
         $this->requireLogin();
-        return view('home/home');
+        $data['title'] = 'Home - Ryuzaki Store';
+        return view('home/home', $data);
     }
 
     public function profile()

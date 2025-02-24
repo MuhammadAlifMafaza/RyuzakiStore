@@ -18,12 +18,11 @@
                 <a href="#" class="text-dark"><i class="fab fa-linkedin fa-lg"></i></a>
             </div>
         </div>
-
     </div>
 </footer>
 
 <!-- Scripts -->
-<script src="<?= base_url("/assets/js/products.js") ?>"></script>
+<script src="<?= base_url('assets/js/products.js') ?>"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/js/all.min.js"></script>
 </body>

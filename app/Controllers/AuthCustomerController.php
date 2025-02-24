@@ -10,7 +10,7 @@ class AuthCustomerController extends Controller
     /* Menampilkan halaman login */
     public function login()
     {
-        return view('home/auth/Login');
+        return view('home/auth/login');
     }
 
     /* Memproses login customer */
@@ -45,7 +45,7 @@ class AuthCustomerController extends Controller
     public function logout()
     {
         session()->destroy();
-        return redirect()->to('/customerAuth/login');
+        return redirect()->to('customerAuth/login');
     }
 
     /* Menampilkan halaman registrasi */
@@ -85,19 +85,6 @@ class AuthCustomerController extends Controller
         $datePart = date('Ymd');
         $randomPart = strtoupper(bin2hex(random_bytes(2))); // menghasilkan 4 karakter acak
         $id_customer = sprintf("CUS-%s-%s", $datePart, $randomPart);
-
-        $customerModel->save([
-            'id_customer'      => $id_customer,
-            'username'         => $username,
-            'full_name'        => $full_name,
-            'email'            => $email,
-            'password'         => $hashedPassword,
-            'phone_number'     => $phone_number,
-            'address'          => $address,
-            'membership_level' => 'bronze',
-            'total_spent'      => 0.00,
-            // 'created_at'       => $created_at
-        ]);
 
         $data = [
             'id_customer'      => $id_customer,

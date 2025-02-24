@@ -6,9 +6,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Ryuzaki Store</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="<?= base_url('\bootstrap-5.2.3\css\bootstrap.min.css') ?>" rel="stylesheet" type="text/css">
-    <link href="<?= base_url('\assets\css\home.min.css') ?>" rel="stylesheet" type="text/css">
-    <link href="<?= base_url('\assets\css\product.css') ?>" rel="stylesheet" type="text/css">
+    <link href="<?= base_url('bootstrap-5.2.3/css/bootstrap.min.css') ?>" rel="stylesheet" type="text/css">
+    <link href="<?= base_url('assets/css/home.min.css') ?>" rel="stylesheet" type="text/css">
+    <link href="<?= base_url('assets/css/product.css') ?>" rel="stylesheet" type="text/css">
     <link href="<?= base_url('sb-admin2/vendor/fontawesome-free/css/all.min.css') ?>" rel="stylesheet" type="text/css">
 </head>
 
@@ -16,7 +16,7 @@
     <nav class="navbar navbar-expand-lg navbar-light">
         <div class="container">
             <a class="navbar-brand d-flex align-items-center" href="<?= site_url('home') ?>">
-                <img src="<?= base_url("assets\img\Logo_RZ-nobg.png") ?>" alt="Brand Logo">
+                <img src="<?= base_url('assets/img/Logo_RZ-nobg.png') ?>" alt="Brand Logo">
                 <span class="ms-2">Ryuzaki Store</span>
             </a>
             <div class="collapse navbar-collapse">
@@ -24,8 +24,20 @@
                     <li class="nav-item"><a class="nav-link active" href="<?= site_url('home') ?>">Home</a></li>
                     <li class="nav-item"><a class="nav-link" href="<?= site_url('contact') ?>">Contact</a></li>
                     <li class="nav-item"><a class="nav-link" href="<?= site_url('About') ?>">About</a></li>
+                    <?php
+                    $session = session();
+                    $cartCount = 0;
+                    if ($session->get('is_logged_in')) {
+                        // Inisialisasi model di view (meskipun idealnya sebaiknya melalui BaseController atau Helper)
+                        $cartModel = new \App\Models\CartModel();
+                        $cartItems = $cartModel->getCartByCustomerId($session->get('id_customer'));
+                        $cartCount = count($cartItems);
+                    }
+                    ?>
                     <li class="nav-item">
-                        <a class="nav-link" href="<?= site_url('/cart') ?>">🛒 Keranjang <span class="badge bg-danger">0</span></a>
+                        <a class="nav-link" href="<?= site_url('cart') ?>">
+                            🛒 Keranjang <span class="badge bg-danger"><?= $cartCount ?></span>
+                        </a>
                     </li>
                 </ul>
                 <ul class="navbar-nav">
