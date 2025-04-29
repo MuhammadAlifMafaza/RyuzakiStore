@@ -9,16 +9,8 @@ class ProductModel extends Model
     protected $table = 'products'; // Table name
     protected $primaryKey = 'id_product'; // Primary key of the table
     protected $allowedFields = [
-        'id_product',
-        'product_name',
-        'category',
-        'tags',
-        'description',
-        'image',
-        'price',
-        'stock_quantity',
-        'created_at',
-        'updated_at',
+        'id_product', 'product_name', 'category', 'tags', 'description',
+        'image', 'price', 'stock_quantity', 'created_at', 'updated_at',
     ];
 
     protected $useTimestamps = true; // Enable timestamps for created_at and updated_at

@@ -13,6 +13,24 @@ class OrderModel extends Model
     ];
 
     protected $useTimestamps = true;
+
+    // Fungsi untuk mendapatkan pendapatan per bulan
+    public function getMonthlyRevenue()
+    {
+        return $this->select("DATE_FORMAT(created_at, '%Y-%m') AS month, SUM(total_price) AS revenue")
+                    ->groupBy('month')
+                    ->orderBy('month', 'ASC')
+                    ->findAll();
+    }
+
+    // Fungsi untuk mendapatkan statistik status order
+    public function getOrderStats()
+    {
+        return $this->select("status, COUNT(id) AS total")
+                    ->groupBy('status')
+                    ->findAll();
+    }
+    
     /* Membuat order baru */
     public function createOrder($orderData)
     {
